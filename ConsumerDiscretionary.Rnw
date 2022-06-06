@@ -1,0 +1,921 @@
+\documentclass[a4paper]{book}
+\usepackage{amssymb}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{bm}
+\usepackage{pstricks}
+\usepackage{qrcode}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{booktabs,tabularx,dcolumn}
+\usepackage{caption}
+\usepackage{xcolor, colortbl}
+\usepackage{changepage}
+\usepackage{fontspec}
+\usepackage{array}
+\usepackage{lastpage}
+\usepackage{color}  
+\usepackage{hyperref}
+\usepackage{cleveref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=black,  %choose some color if you want links to stand out
+}
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{morefloats}
+\usepackage[section]{placeins}
+
+\newcommand{\definesamplelabel}{MPLP Inc.}
+\newcommand{\definesamplename}{Consumer Discretionary}
+\newcommand{\definesampleauthor}{MPA}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\definesamplelabel{}}
+\lhead{\definesamplename{}}
+\rfoot{Page \thepage}
+\cfoot{v. Foundation}
+\lfoot{Analyst: \definesampleauthor}
+
+\maxdeadcycles=200
+
+\begin{document}
+
+<<Create_PDF,include=FALSE, results='hide'>>=
+
+library(knitr)
+opts_chunk$set(concordance=TRUE)
+@
+
+<<setup, include=FALSE, cache=FALSE>>=
+muffleError <- function(x,options) {}
+knit_hooks$set(error=muffleError)
+@
+
+<<Libraries_install,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+install.packages("devtools")
+remotes::install_github("joshuaulrich/quantmod@358-getsymbols-new.session")
+install.packages("xts")
+install.packages("rvest")
+install.packages("tidyverse")
+install.packages("stringr")
+install.packages("forcats")
+install.packages("lubridate")
+install.packages("plotly")
+install.packages("dplyr")
+install.packages("PerformanceAnalytics")
+install.packages("FinancialInstrument")
+install.packages("foreach")
+install.packages("corrplot")
+install.packages("webshot")
+install.packages("data.table")
+@
+
+
+<<Libraries,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+library('knitr')
+library('xtable')
+library('quantmod')
+library('xts')
+library('rvest')
+library('tidyverse')
+library('stringr')
+library('forcats')
+library('lubridate')
+library('plotly')
+library('dplyr')
+library('PerformanceAnalytics')
+library('FinancialInstrument')
+library('foreach')
+library('corrplot')
+library('webshot')
+library('data.table')
+library('tidyverse')
+
+@
+
+
+
+
+\title{\definesamplelabel{}\\ \definesamplename{}}
+
+\author{MPA}
+
+\maketitle
+
+\thispagestyle{empty}
+
+
+\begingroup
+\tableofcontents
+\let\clearpage\relax
+\endgroup
+
+\clearpage
+
+\thispagestyle{empty}
+
+\begingroup
+\listoffigures
+\let\clearpage\relax
+\listoftables
+\endgroup
+
+
+\clearpage
+
+\thispagestyle{empty}
+
+
+
+
+
+
+
+\chapter*{Consumer Discretionary}
+
+\setcounter{chapter}{1}
+
+<<Get Symbols ConsumerDiscretionary1, echo=FALSE, results='hide',include=FALSE>>=
+
+listaConsumerDiscretionary1 <- c("AAP","AMZN","APTV","AZO","BBWI","BBY","BKNG","BWA","CCL",
+"CMG","CZR","DG","DHI","DLTR","DPZ","DRI","EBAY","ETSY","EXPE","F","GM",
+"GCP","GRMN","HAS","HD","HLT","KMX","LEN","LKQ","LOW")
+
+getSymbols(listaConsumerDiscretionary1,auto.assign = TRUE, from="2015-11-01",to=Sys.Date()+1)
+
+listaConsumerDiscretionary2 <- c("LVS","MAR","MCD",
+"MGM","MHK","NCLH","NKE","NVR","NWL","ORLY","PENN","PHM","POOL","PVH","RCL",
+"RL","ROST","SBUX","TGT","TJX","TPR","TSCO","TSLA","UA","UAA","ULTA","VFC",
+"WHR","WYNN","YUM")
+
+getSymbols(listaConsumerDiscretionary2,auto.assign = TRUE, from="2015-11-01",to=Sys.Date()+1)
+
+@
+
+\section{Consumer Discretionary TTR Plots}
+
+
+<<Tutankamon_ConsumerDiscretionary1 ,fig.keep='all', warning=FALSE,message=FALSE ,echo=FALSE,fig=TRUE, fig.align='center', results='hide', out.width="1.1\\linewidth", fig.cap=listaConsumerDiscretionary1>>=
+
+fun_gen_plts = function(x){
+ 
+  chartSeries(get(x),
+              name = x,
+              TA=' addBBands();
+                   addBBands(draw="p");
+                   addVo();
+                   addMACD();
+                   addADX();
+                   addATR();
+                   addEnvelope();
+                   addCCI();
+                   addCMO();
+                   addDPO();
+                   addRSI();
+                   addSMI();
+                   addWPR();
+                   addCMF();
+                   addKST();
+                   addAroon();
+                   addTDI();
+                   addMFI();
+                   addSAR(accel = c(0.2, 0.2),col=1);
+                   addSMA(n = 20, on = 1, with.col = Cl, overlay = TRUE, col = "green");
+                   addSMA(n = 50, on = 1, with.col = Cl, overlay = TRUE, col = "blue");
+                   addSMA(n = 200, on = 1, with.col = Cl, overlay = TRUE, col = "red");
+                   ',subset='last 3 months', theme = "white"
+              )
+ 
+
+}
+
+i=1
+
+
+for(i in i:length(listaConsumerDiscretionary1)){
+ 
+fun_gen_plts(listaConsumerDiscretionary1[i])
+ 
+i=i+1
+ 
+}
+
+@
+
+
+<<Tutankamon_ConsumerDiscretionary2 ,fig.keep='all', warning=FALSE,message=FALSE ,echo=FALSE,fig=TRUE, fig.align='center', results='hide', out.width="1.1\\linewidth", fig.cap=listaConsumerDiscretionary2>>=
+
+fun_gen_plts = function(x){
+ 
+  chartSeries(get(x),
+              name = x,
+              TA=' addBBands();
+                   addBBands(draw="p");
+                   addVo();
+                   addMACD();
+                   addADX();
+                   addATR();
+                   addEnvelope();
+                   addCCI();
+                   addCMO();
+                   addDPO();
+                   addRSI();
+                   addSMI();
+                   addWPR();
+                   addCMF();
+                   addKST();
+                   addAroon();
+                   addTDI();
+                   addMFI();
+                   addSAR(accel = c(0.2, 0.2),col=1);
+                   addSMA(n = 20, on = 1, with.col = Cl, overlay = TRUE, col = "green");
+                   addSMA(n = 50, on = 1, with.col = Cl, overlay = TRUE, col = "blue");
+                   addSMA(n = 200, on = 1, with.col = Cl, overlay = TRUE, col = "red");
+                   ',subset='last 3 months', theme = "white"
+              )
+ 
+
+}
+
+i=1
+
+
+for(i in i:length(listaConsumerDiscretionary2)){
+ 
+fun_gen_plts(listaConsumerDiscretionary2[i])
+ 
+i=i+1
+ 
+}
+
+@
+
+<<parameters ConsumerDiscretionary1, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_sim_ConsumerDiscretionary1 = function(x){
+ 
+  i=1
+ 
+  testConsumerDiscretionary1 <- as.xts()
+ 
+  finalConsumerDiscretionary1 <- as.xts()
+ 
+  for (i in i:length(listaConsumerDiscretionary1)) {
+   
+    testConsumerDiscretionary1[[i]] <- getSymbols(listaSPConsumerDiscretionary1[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalConsumerDiscretionary1 <- append(finalConsumerDiscretionary1[[i]],testConsumerDiscretionary1[[i]])
+   
+  }
+ 
+  return(finalConsumerDiscretionary1)
+ 
+}
+
+
+fun_gen_tab_ConsumerDiscretionary1 = function(y){
+ 
+ y <- list()
+ Openy <- list()
+ Closey <- list()
+ Diffy <- list()
+ CltoCly <- list()
+ ClosePrevy <- list()
+ Weeky <- list()
+ Monthy <- list()
+ Yeary <- list()
+ Fivey <- list()
+
+for(i in 1:length(listaConsumerDiscretionary1)){
+ 
+y[[i]] <- getSymbols(listaConsumerDiscretionary1[i],auto.assign = FALSE,from="2015-11-01",to=Sys.Date()+1 ,return.class="xts")
+
+
+y[[i]] <- na.locf(y[[i]], xout=seq(head(index(y[[i]]),1),tail(index(y[[i]]),1),by="1 day"))
+Openy[[i]] <- as.numeric(y[[i]][end(y[[i]]),1])
+Closey[[i]] <- as.numeric(y[[i]][end(y[[i]]),4])
+Diffy[[i]] <- (Closey[[i]]-Openy[[i]])*100/Openy[[i]]
+
+ClosePrevy[[i]] <- as.numeric(y[[i]][end(y[[i]])-1,4])
+
+CltoCly[[i]] <- (Closey[[i]]-ClosePrevy[[i]])*100/ClosePrevy[[i]]
+
+Weeky[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-7,1])) *100 / as.numeric(y[[i]][end(y[[i]])-7,1])
+
+
+Monthy[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-30,4])) *100 / as.numeric(y[[i]][end(y[[i]])-30,4])
+
+
+
+Yeary[[i]] <-(as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]]["2021-01-01",4])) *100 / as.numeric(y[[i]]["2021-01-01",4])
+
+if(length(Yeary[[i]])==0){Yeary[[i]]= NA} else {format(round(Yeary[[i]],digits = 2),nsmall=2)}
+
+
+Fivey[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-1825,4])) *100 / as.numeric(y[[i]][end(y[[i]])-1825,4])
+
+if(length(Fivey[[i]])==0){Fivey[[i]]= NA} else {format(round(Fivey[[i]],digits = 2),nsmall=2)}
+
+
+
+}
+ 
+ResTab <- data.frame()
+ 
+ResTab <- rbind(Diffy,CltoCly,Weeky,Monthy,Yeary,Fivey)
+ 
+
+colnames(ResTab) <- listaConsumerDiscretionary1
+
+
+ResTab_transpose <- as.data.frame(t(as.matrix(ResTab)))
+
+format.data.frame(ResTab_transpose, digits =2)
+
+ 
+return(as.data.frame(ResTab_transpose))
+ 
+}
+
+
+
+fun_gen_sim_ConsumerDiscretionary1 = function(x){
+ 
+  i=1
+ 
+  testConsumerDiscretionary1 <- as.xts()
+ 
+  finalConsumerDiscretionary1 <- as.xts()
+ 
+  for (i in i:length(listaConsumerDiscretionary1)) {
+   
+    testConsumerDiscretionary1[[i]] <- getSymbols(listaConsumerDiscretionary1[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalConsumerDiscretionary1 <- append(finalConsumerDiscretionary1[[i]],testConsumerDiscretionary1[[i]])
+   
+  }
+ 
+  return(finalConsumerDiscretionary1)
+ 
+}
+
+@
+
+
+<<parameters ConsumerDiscretionary2, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_sim_ConsumerDiscretionary2 = function(x){
+ 
+  i=1
+ 
+  testConsumerDiscretionary2 <- as.xts()
+ 
+  finalConsumerDiscretionary2 <- as.xts()
+ 
+  for (i in i:length(listaConsumerDiscretionary2)) {
+   
+    testConsumerDiscretionary2[[i]] <- getSymbols(listaSPConsumerDiscretionary2[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalConsumerDiscretionary2 <- append(finalConsumerDiscretionary2[[i]],testConsumerDiscretionary2[[i]])
+   
+  }
+ 
+  return(finalConsumerDiscretionary2)
+ 
+}
+
+
+fun_gen_tab_ConsumerDiscretionary2 = function(y){
+ 
+ y <- list()
+ Openy <- list()
+ Closey <- list()
+ Diffy <- list()
+ CltoCly <- list()
+ ClosePrevy <- list()
+ Weeky <- list()
+ Monthy <- list()
+ Yeary <- list()
+ Fivey <- list()
+
+for(i in 1:length(listaConsumerDiscretionary2)){
+ 
+y[[i]] <- getSymbols(listaConsumerDiscretionary2[i],auto.assign = FALSE,from="2015-11-01",to=Sys.Date()+1 ,return.class="xts")
+
+
+y[[i]] <- na.locf(y[[i]], xout=seq(head(index(y[[i]]),1),tail(index(y[[i]]),1),by="1 day"))
+Openy[[i]] <- as.numeric(y[[i]][end(y[[i]]),1])
+Closey[[i]] <- as.numeric(y[[i]][end(y[[i]]),4])
+Diffy[[i]] <- (Closey[[i]]-Openy[[i]])*100/Openy[[i]]
+
+ClosePrevy[[i]] <- as.numeric(y[[i]][end(y[[i]])-1,4])
+
+CltoCly[[i]] <- (Closey[[i]]-ClosePrevy[[i]])*100/ClosePrevy[[i]]
+
+Weeky[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-7,1])) *100 / as.numeric(y[[i]][end(y[[i]])-7,1])
+
+
+Monthy[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-30,4])) *100 / as.numeric(y[[i]][end(y[[i]])-30,4])
+
+
+
+Yeary[[i]] <-(as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]]["2021-01-01",4])) *100 / as.numeric(y[[i]]["2021-01-01",4])
+
+if(length(Yeary[[i]])==0){Yeary[[i]]= NA} else {format(round(Yeary[[i]],digits = 2),nsmall=2)}
+
+
+Fivey[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-1825,4])) *100 / as.numeric(y[[i]][end(y[[i]])-1825,4])
+
+if(length(Fivey[[i]])==0){Fivey[[i]]= NA} else {format(round(Fivey[[i]],digits = 2),nsmall=2)}
+
+
+
+}
+ 
+ResTab <- data.frame()
+ 
+ResTab <- rbind(Diffy,CltoCly,Weeky,Monthy,Yeary,Fivey)
+ 
+
+colnames(ResTab) <- listaConsumerDiscretionary2
+
+
+ResTab_transpose <- as.data.frame(t(as.matrix(ResTab)))
+
+format.data.frame(ResTab_transpose, digits =2)
+
+ 
+return(as.data.frame(ResTab_transpose))
+ 
+}
+
+
+
+fun_gen_sim_ConsumerDiscretionary2 = function(x){
+ 
+  i=1
+ 
+  testConsumerDiscretionary2 <- as.xts()
+ 
+  finalConsumerDiscretionary2 <- as.xts()
+ 
+  for (i in i:length(listaConsumerDiscretionary2)) {
+   
+    testConsumerDiscretionary2[[i]] <- getSymbols(listaConsumerDiscretionary2[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalConsumerDiscretionary2 <- append(finalConsumerDiscretionary2[[i]],testConsumerDiscretionary2[[i]])
+   
+  }
+ 
+  return(finalConsumerDiscretionary2)
+ 
+}
+
+@
+
+
+
+\subsection{Variation for Consumer Discretionary}
+
+<<Table_Variance_y_ConsumerDiscretionary1 , echo=FALSE, results = "asis" >>=
+
+table.ConsumerDiscretionary1 <- fun_gen_tab_ConsumerDiscretionary1(listaConsumerDiscretionary1)
+ 
+ 
+
+colnames(table.ConsumerDiscretionary1) <- c("Day","CloseToClose", "Week","Month","Year","5 Years")
+rownames(table.ConsumerDiscretionary1) <- listaConsumerDiscretionary1
+
+tex.tableConsumerDiscretionary1 <- xtable(table.ConsumerDiscretionary1)
+caption(tex.tableConsumerDiscretionary1) <- sprintf("Variance for ConsumerDiscretionary1")
+print(tex.tableConsumerDiscretionary1,
+      sep='\n' )
+
+@
+
+
+<<parameters z1 ConsumerDiscretionary1, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_fun_ConsumerDiscretionary1 = function(){
+
+
+FundAnalysis_z  <- c()
+MarketCap    <- c()
+EarningsShare <- c()
+PERatio      <- c()
+BookValue    <- c()
+DividendYield <- c()
+DividendPayDate <- c()
+EarningsTimeStamp <- c()
+PriceEPSEstimate <- c()
+EarningsStartTime <- c()
+EPSForwaerd        <- c()
+EarningsEndTime  <- c()
+PriceBook        <- c()
+ExDividendDate   <- c()
+ChangeMA50       <- c()
+ChangeMA200       <- c()
+
+
+i=1
+
+for (i in i:length(listaConsumerDiscretionary1)){
+ 
+FundAnalysis_z[[i]] <- getQuote(listaConsumerDiscretionary1[i], what = yahooQF(c("Market Capitalization","Earnings/Share","P/E Ratio","Book Value","Dividend Yield","Dividend Pay Date","Earnings Timestamp","Price/EPS Estimate Next Year", "Earnings Start Time","EPS Forward","Earnings End Time","Price/Book","Ex-Dividend Date","Change From 50-day Moving Average","Change From 200-day Moving Average")))
+
+MarketCap[[i]] <- FundAnalysis_z[[i]]$`Market Capitalization`
+EarningsShare[[i]] <- FundAnalysis_z[[i]]$`Earnings/Share`
+PERatio[[i]]       <- FundAnalysis_z[[i]]$`P/E Ratio`
+BookValue[[i]]     <- FundAnalysis_z[[i]]$`Book Value`
+DividendYield[[i]] <- FundAnalysis_z[[i]]$`Dividend Yield`
+DividendPayDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Dividend Pay Date`, origin = "1970-01-01")
+EarningsTimeStamp[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Timestamp`, origin = "1970-01-01")
+PriceEPSEstimate[[i]] <- FundAnalysis_z[[i]]$`Price/EPS Estimate Next Year`
+EarningsStartTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Start Time`, origin = "1970-01-01")
+EPSForwaerd[[i]] <- FundAnalysis_z[[i]]$`EPS Forward`
+EarningsEndTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings End Time`,origin = "1970-01-01")
+PriceBook[[i]] <- FundAnalysis_z[[i]]$`Price/Book`
+ExDividendDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Ex-Dividend Date`, origin = "1970-01-01")
+ChangeMA50[[i]] <- FundAnalysis_z[[i]]$`Change From 50-day MA`
+ChangeMA200[[i]] <- FundAnalysis_z[[i]]$`Change From 200-day MA`}
+
+ResFunAn <- data.frame()
+
+ResFunAn <- rbind(MarketCap,
+                  EarningsShare,
+                  PERatio,
+                  BookValue,
+                  DividendYield,
+                  DividendPayDate,
+                  EarningsTimeStamp,
+                  PriceEPSEstimate,
+                  EarningsStartTime,
+                  EPSForwaerd,
+                  EarningsEndTime,
+                  PriceBook,
+                  ExDividendDate,
+                  ChangeMA50,
+                  ChangeMA200)
+
+return(ResFunAn)
+
+}
+
+<<Table_Variance_y_ConsumerDiscretionary2 , echo=FALSE, results = "asis" >>=
+
+table.ConsumerDiscretionary2 <- fun_gen_tab_ConsumerDiscretionary2(listaConsumerDiscretionary2)
+ 
+ 
+
+colnames(table.ConsumerDiscretionary2) <- c("Day","CloseToClose", "Week","Month","Year","5 Years")
+rownames(table.ConsumerDiscretionary2) <- listaConsumerDiscretionary2
+
+tex.tableConsumerDiscretionary2 <- xtable(table.ConsumerDiscretionary2)
+caption(tex.tableConsumerDiscretionary2) <- sprintf("Variance for ConsumerDiscretionary2")
+print(tex.tableConsumerDiscretionary2,
+      sep='\n' )
+
+@
+
+
+<<parameters z1 ConsumerDiscretionary2, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_fun_ConsumerDiscretionary2 = function(){
+
+
+FundAnalysis_z  <- c()
+MarketCap    <- c()
+EarningsShare <- c()
+PERatio      <- c()
+BookValue    <- c()
+DividendYield <- c()
+DividendPayDate <- c()
+EarningsTimeStamp <- c()
+PriceEPSEstimate <- c()
+EarningsStartTime <- c()
+EPSForwaerd        <- c()
+EarningsEndTime  <- c()
+PriceBook        <- c()
+ExDividendDate   <- c()
+ChangeMA50       <- c()
+ChangeMA200       <- c()
+
+
+i=1
+
+for (i in i:length(listaConsumerDiscretionary2)){
+ 
+FundAnalysis_z[[i]] <- getQuote(listaConsumerDiscretionary2[i], what = yahooQF(c("Market Capitalization","Earnings/Share","P/E Ratio","Book Value","Dividend Yield","Dividend Pay Date","Earnings Timestamp","Price/EPS Estimate Next Year", "Earnings Start Time","EPS Forward","Earnings End Time","Price/Book","Ex-Dividend Date","Change From 50-day Moving Average","Change From 200-day Moving Average")))
+
+MarketCap[[i]] <- FundAnalysis_z[[i]]$`Market Capitalization`
+EarningsShare[[i]] <- FundAnalysis_z[[i]]$`Earnings/Share`
+PERatio[[i]]       <- FundAnalysis_z[[i]]$`P/E Ratio`
+BookValue[[i]]     <- FundAnalysis_z[[i]]$`Book Value`
+DividendYield[[i]] <- FundAnalysis_z[[i]]$`Dividend Yield`
+DividendPayDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Dividend Pay Date`, origin = "1970-01-01")
+EarningsTimeStamp[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Timestamp`, origin = "1970-01-01")
+PriceEPSEstimate[[i]] <- FundAnalysis_z[[i]]$`Price/EPS Estimate Next Year`
+EarningsStartTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Start Time`, origin = "1970-01-01")
+EPSForwaerd[[i]] <- FundAnalysis_z[[i]]$`EPS Forward`
+EarningsEndTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings End Time`,origin = "1970-01-01")
+PriceBook[[i]] <- FundAnalysis_z[[i]]$`Price/Book`
+ExDividendDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Ex-Dividend Date`, origin = "1970-01-01")
+ChangeMA50[[i]] <- FundAnalysis_z[[i]]$`Change From 50-day MA`
+ChangeMA200[[i]] <- FundAnalysis_z[[i]]$`Change From 200-day MA`}
+
+ResFunAn <- data.frame()
+
+ResFunAn <- rbind(MarketCap,
+                  EarningsShare,
+                  PERatio,
+                  BookValue,
+                  DividendYield,
+                  DividendPayDate,
+                  EarningsTimeStamp,
+                  PriceEPSEstimate,
+                  EarningsStartTime,
+                  EPSForwaerd,
+                  EarningsEndTime,
+                  PriceBook,
+                  ExDividendDate,
+                  ChangeMA50,
+                  ChangeMA200)
+
+return(ResFunAn)
+
+}
+
+
+@
+
+
+\newpage
+
+
+\section{Fundamental Analysis Tables Consumer Discretionary}
+
+<<Table_Final_Fundamental_analysis_ConsumerDiscretionary1 , echo=FALSE, results = "asis" >>=
+
+
+Par_fund_an_ConsumerDiscretionary1 <- as.data.frame(fun_gen_fun_ConsumerDiscretionary1())
+
+setnames(Par_fund_an_ConsumerDiscretionary1, listaConsumerDiscretionary1)
+
+Fund_An_Tab_Res_ConsumerDiscretionary1 <- as.data.frame(matrix("", ncol = 1, nrow = 15))
+
+
+
+i=1
+
+for (i in i:length(listaConsumerDiscretionary1)) {
+
+
+Fund_An_Tab_Res_ConsumerDiscretionary1 <- Par_fund_an_ConsumerDiscretionary1[listaConsumerDiscretionary1[i]]
+
+
+
+New_Fund_An_Tab_Res1ConsumerDiscretionary1 <- Par_fund_an_ConsumerDiscretionary1[[1,i]]
+
+New_Fund_An_Tab_Res2ConsumerDiscretionary1 <- Par_fund_an_ConsumerDiscretionary1[[2,i]]
+
+New_Fund_An_Tab_Res3ConsumerDiscretionary1 <-  Par_fund_an_ConsumerDiscretionary1[[3,i]]
+
+New_Fund_An_Tab_Res4ConsumerDiscretionary1 <-  Par_fund_an_ConsumerDiscretionary1[[4,i]]
+
+New_Fund_An_Tab_Res5ConsumerDiscretionary1 <-  Par_fund_an_ConsumerDiscretionary1[[5,i]]
+
+New_Fund_An_Tab_Res6ConsumerDiscretionary1 <- Par_fund_an_ConsumerDiscretionary1[[6,i]]
+
+New_Fund_An_Tab_Res7ConsumerDiscretionary1 <- Par_fund_an_ConsumerDiscretionary1[[7,i]]
+
+New_Fund_An_Tab_Res8ConsumerDiscretionary1 <- Par_fund_an_ConsumerDiscretionary1[[8,i]]
+
+New_Fund_An_Tab_Res9ConsumerDiscretionary1 <- Par_fund_an_ConsumerDiscretionary1[[9,i]]
+
+New_Fund_An_Tab_Res10ConsumerDiscretionary1 <-  Par_fund_an_ConsumerDiscretionary1[[10,i]]
+
+New_Fund_An_Tab_Res11ConsumerDiscretionary1 <- Par_fund_an_ConsumerDiscretionary1[[11,i]]
+
+New_Fund_An_Tab_Res12ConsumerDiscretionary1 <- Par_fund_an_ConsumerDiscretionary1[[12,i]]
+
+New_Fund_An_Tab_Res13ConsumerDiscretionary1 <- Par_fund_an_ConsumerDiscretionary1[[13,i]]
+
+New_Fund_An_Tab_Res14ConsumerDiscretionary1 <-  Par_fund_an_ConsumerDiscretionary1[[14,i]]
+
+New_Fund_An_Tab_Res15ConsumerDiscretionary1 <- Par_fund_an_ConsumerDiscretionary1[[15,i]]
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary1 <- matrix("", ncol = 2, nrow = 15)
+
+colnames(table.FundAnalysisDMY_ConsumerDiscretionary1) <- c("Parameter", "Value")
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[1,1] <- "Market Capitalization"
+table.FundAnalysisDMY_ConsumerDiscretionary1[1,2] <- sprintf("%.8g",New_Fund_An_Tab_Res1ConsumerDiscretionary1)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[2,1] <- "P/E Ratio"
+table.FundAnalysisDMY_ConsumerDiscretionary1[2,2] <- sprintf("%.2f",New_Fund_An_Tab_Res3ConsumerDiscretionary1)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[3,1] <- "Earnings / Share"
+table.FundAnalysisDMY_ConsumerDiscretionary1[3,2] <- sprintf("%.2f",New_Fund_An_Tab_Res2ConsumerDiscretionary1)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[4,1] <- "Price / Book"
+table.FundAnalysisDMY_ConsumerDiscretionary1[4,2] <- sprintf("%.2f",New_Fund_An_Tab_Res12ConsumerDiscretionary1)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[5,1] <- "Book Value"
+table.FundAnalysisDMY_ConsumerDiscretionary1[5,2] <- sprintf("%.2f",New_Fund_An_Tab_Res4ConsumerDiscretionary1)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[6,1] <- "EPS Forward"
+table.FundAnalysisDMY_ConsumerDiscretionary1[6,2] <- sprintf("%.2f",New_Fund_An_Tab_Res10ConsumerDiscretionary1)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[7,1] <- "Price EPS Estimate Next Year"
+table.FundAnalysisDMY_ConsumerDiscretionary1[7,2] <- sprintf("%.2f",New_Fund_An_Tab_Res8ConsumerDiscretionary1)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[8,1] <- "Dividend Yield"
+table.FundAnalysisDMY_ConsumerDiscretionary1[8,2] <- sprintf("%.6f",New_Fund_An_Tab_Res5ConsumerDiscretionary1)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[9,1] <- "Dividend Pay Date"
+table.FundAnalysisDMY_ConsumerDiscretionary1[9,2] <- sprintf("%s",New_Fund_An_Tab_Res6ConsumerDiscretionary1)
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[10,1] <- "Dividend Ex-Date"
+table.FundAnalysisDMY_ConsumerDiscretionary1[10,2] <- sprintf("%s",New_Fund_An_Tab_Res13ConsumerDiscretionary1)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[11,1] <- "Earnings Time Stamp"
+table.FundAnalysisDMY_ConsumerDiscretionary1[11,2] <- sprintf("%s",New_Fund_An_Tab_Res7ConsumerDiscretionary1)
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[12,1] <- "Earnings Start Time"
+table.FundAnalysisDMY_ConsumerDiscretionary1[12,2] <- sprintf("%s",New_Fund_An_Tab_Res9ConsumerDiscretionary1)
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[13,1] <- "Earnings End Time"
+table.FundAnalysisDMY_ConsumerDiscretionary1[13,2] <- sprintf("%s",New_Fund_An_Tab_Res11ConsumerDiscretionary1)
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[14,1] <- "Change From 50-day Moving Average"
+table.FundAnalysisDMY_ConsumerDiscretionary1[14,2] <- sprintf("%.2f",New_Fund_An_Tab_Res14ConsumerDiscretionary1)
+
+table.FundAnalysisDMY_ConsumerDiscretionary1[15,1] <- "Change From 200-day Moving Average"
+table.FundAnalysisDMY_ConsumerDiscretionary1[15,2] <- sprintf("%.2f",New_Fund_An_Tab_Res15ConsumerDiscretionary1)
+
+
+tex.table.FundAnalysisDMY_ConsumerDiscretionary1 <- xtable(table.FundAnalysisDMY_ConsumerDiscretionary1)
+caption(tex.table.FundAnalysisDMY_ConsumerDiscretionary1) <- sprintf("Fundamental Analysis parameters for %s", listaConsumerDiscretionary1[i])
+print(tex.table.FundAnalysisDMY_ConsumerDiscretionary1,
+      include.rownames = FALSE,
+      caption.placement = "top",
+      table.placement = "ht")
+
+
+}
+
+
+
+@
+
+<<Table_Final_Fundamental_analysis_ConsumerDiscretionary2 , echo=FALSE, results = "asis" >>=
+
+
+Par_fund_an_ConsumerDiscretionary2 <- as.data.frame(fun_gen_fun_ConsumerDiscretionary2())
+
+setnames(Par_fund_an_ConsumerDiscretionary2, listaConsumerDiscretionary2)
+
+Fund_An_Tab_Res_ConsumerDiscretionary2 <- as.data.frame(matrix("", ncol = 1, nrow = 15))
+
+
+
+i=1
+
+for (i in i:length(listaConsumerDiscretionary2)) {
+
+
+Fund_An_Tab_Res_ConsumerDiscretionary2 <- Par_fund_an_ConsumerDiscretionary2[listaConsumerDiscretionary2[i]]
+
+
+
+New_Fund_An_Tab_Res1ConsumerDiscretionary2 <- Par_fund_an_ConsumerDiscretionary2[[1,i]]
+
+New_Fund_An_Tab_Res2ConsumerDiscretionary2 <- Par_fund_an_ConsumerDiscretionary2[[2,i]]
+
+New_Fund_An_Tab_Res3ConsumerDiscretionary2 <-  Par_fund_an_ConsumerDiscretionary2[[3,i]]
+
+New_Fund_An_Tab_Res4ConsumerDiscretionary2 <-  Par_fund_an_ConsumerDiscretionary2[[4,i]]
+
+New_Fund_An_Tab_Res5ConsumerDiscretionary2 <-  Par_fund_an_ConsumerDiscretionary2[[5,i]]
+
+New_Fund_An_Tab_Res6ConsumerDiscretionary2 <- Par_fund_an_ConsumerDiscretionary2[[6,i]]
+
+New_Fund_An_Tab_Res7ConsumerDiscretionary2 <- Par_fund_an_ConsumerDiscretionary2[[7,i]]
+
+New_Fund_An_Tab_Res8ConsumerDiscretionary2 <- Par_fund_an_ConsumerDiscretionary2[[8,i]]
+
+New_Fund_An_Tab_Res9ConsumerDiscretionary2 <- Par_fund_an_ConsumerDiscretionary2[[9,i]]
+
+New_Fund_An_Tab_Res10ConsumerDiscretionary2 <-  Par_fund_an_ConsumerDiscretionary2[[10,i]]
+
+New_Fund_An_Tab_Res11ConsumerDiscretionary2 <- Par_fund_an_ConsumerDiscretionary2[[11,i]]
+
+New_Fund_An_Tab_Res12ConsumerDiscretionary2 <- Par_fund_an_ConsumerDiscretionary2[[12,i]]
+
+New_Fund_An_Tab_Res13ConsumerDiscretionary2 <- Par_fund_an_ConsumerDiscretionary2[[13,i]]
+
+New_Fund_An_Tab_Res14ConsumerDiscretionary2 <-  Par_fund_an_ConsumerDiscretionary2[[14,i]]
+
+New_Fund_An_Tab_Res15ConsumerDiscretionary2 <- Par_fund_an_ConsumerDiscretionary2[[15,i]]
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary2 <- matrix("", ncol = 2, nrow = 15)
+
+colnames(table.FundAnalysisDMY_ConsumerDiscretionary2) <- c("Parameter", "Value")
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[1,1] <- "Market Capitalization"
+table.FundAnalysisDMY_ConsumerDiscretionary2[1,2] <- sprintf("%.8g",New_Fund_An_Tab_Res1ConsumerDiscretionary2)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[2,1] <- "P/E Ratio"
+table.FundAnalysisDMY_ConsumerDiscretionary2[2,2] <- sprintf("%.2f",New_Fund_An_Tab_Res3ConsumerDiscretionary2)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[3,1] <- "Earnings / Share"
+table.FundAnalysisDMY_ConsumerDiscretionary2[3,2] <- sprintf("%.2f",New_Fund_An_Tab_Res2ConsumerDiscretionary2)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[4,1] <- "Price / Book"
+table.FundAnalysisDMY_ConsumerDiscretionary2[4,2] <- sprintf("%.2f",New_Fund_An_Tab_Res12ConsumerDiscretionary2)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[5,1] <- "Book Value"
+table.FundAnalysisDMY_ConsumerDiscretionary2[5,2] <- sprintf("%.2f",New_Fund_An_Tab_Res4ConsumerDiscretionary2)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[6,1] <- "EPS Forward"
+table.FundAnalysisDMY_ConsumerDiscretionary2[6,2] <- sprintf("%.2f",New_Fund_An_Tab_Res10ConsumerDiscretionary2)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[7,1] <- "Price EPS Estimate Next Year"
+table.FundAnalysisDMY_ConsumerDiscretionary2[7,2] <- sprintf("%.2f",New_Fund_An_Tab_Res8ConsumerDiscretionary2)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[8,1] <- "Dividend Yield"
+table.FundAnalysisDMY_ConsumerDiscretionary2[8,2] <- sprintf("%.6f",New_Fund_An_Tab_Res5ConsumerDiscretionary2)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[9,1] <- "Dividend Pay Date"
+table.FundAnalysisDMY_ConsumerDiscretionary2[9,2] <- sprintf("%s",New_Fund_An_Tab_Res6ConsumerDiscretionary2)
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[10,1] <- "Dividend Ex-Date"
+table.FundAnalysisDMY_ConsumerDiscretionary2[10,2] <- sprintf("%s",New_Fund_An_Tab_Res13ConsumerDiscretionary2)
+
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[11,1] <- "Earnings Time Stamp"
+table.FundAnalysisDMY_ConsumerDiscretionary2[11,2] <- sprintf("%s",New_Fund_An_Tab_Res7ConsumerDiscretionary2)
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[12,1] <- "Earnings Start Time"
+table.FundAnalysisDMY_ConsumerDiscretionary2[12,2] <- sprintf("%s",New_Fund_An_Tab_Res9ConsumerDiscretionary2)
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[13,1] <- "Earnings End Time"
+table.FundAnalysisDMY_ConsumerDiscretionary2[13,2] <- sprintf("%s",New_Fund_An_Tab_Res11ConsumerDiscretionary2)
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[14,1] <- "Change From 50-day Moving Average"
+table.FundAnalysisDMY_ConsumerDiscretionary2[14,2] <- sprintf("%.2f",New_Fund_An_Tab_Res14ConsumerDiscretionary2)
+
+table.FundAnalysisDMY_ConsumerDiscretionary2[15,1] <- "Change From 200-day Moving Average"
+table.FundAnalysisDMY_ConsumerDiscretionary2[15,2] <- sprintf("%.2f",New_Fund_An_Tab_Res15ConsumerDiscretionary2)
+
+
+tex.table.FundAnalysisDMY_ConsumerDiscretionary2 <- xtable(table.FundAnalysisDMY_ConsumerDiscretionary2)
+caption(tex.table.FundAnalysisDMY_ConsumerDiscretionary2) <- sprintf("Fundamental Analysis parameters for %s", listaConsumerDiscretionary2[i])
+print(tex.table.FundAnalysisDMY_ConsumerDiscretionary2,
+      include.rownames = FALSE,
+      caption.placement = "top",
+      table.placement = "ht")
+
+
+}
+
+
+
+@
+
+\FloatBarrier
+
+\clearpage
+
+
+\thispagestyle{empty}
+
+\end{document}

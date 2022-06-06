@@ -1,0 +1,539 @@
+\documentclass[a4paper]{book}
+\usepackage{amssymb}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{bm}
+\usepackage{pstricks}
+\usepackage{qrcode}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{booktabs,tabularx,dcolumn}
+\usepackage{caption}
+\usepackage{xcolor, colortbl}
+\usepackage{changepage}
+\usepackage{fontspec}
+\usepackage{array}
+\usepackage{lastpage}
+\usepackage{color}  
+\usepackage{hyperref}
+\usepackage{cleveref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=black,  %choose some color if you want links to stand out
+}
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{morefloats}
+\usepackage[section]{placeins}
+
+\newcommand{\definesamplelabel}{MPLP Inc.}
+\newcommand{\definesamplename}{Materials}
+\newcommand{\definesampleauthor}{MPA}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\definesamplelabel{}}
+\lhead{\definesamplename{}}
+\rfoot{Page \thepage}
+\cfoot{v. Foundation}
+\lfoot{Analyst: \definesampleauthor}
+
+\begin{document}
+
+<<Create_PDF,include=FALSE, results='hide'>>=
+
+library(knitr)
+opts_chunk$set(concordance=TRUE)
+@
+
+<<setup, include=FALSE, cache=FALSE>>=
+muffleError <- function(x,options) {}
+knit_hooks$set(error=muffleError)
+@
+
+<<Libraries_install,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+install.packages("devtools")
+remotes::install_github("joshuaulrich/quantmod@358-getsymbols-new.session")
+install.packages("xts")
+install.packages("rvest")
+install.packages("tidyverse")
+install.packages("stringr")
+install.packages("forcats")
+install.packages("lubridate")
+install.packages("plotly")
+install.packages("dplyr")
+install.packages("PerformanceAnalytics")
+install.packages("FinancialInstrument")
+install.packages("foreach")
+install.packages("corrplot")
+install.packages("webshot")
+install.packages("data.table")
+@
+
+
+<<Libraries,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+library('knitr')
+library('xtable')
+library('quantmod')
+library('xts')
+library('rvest')
+library('tidyverse')
+library('stringr')
+library('forcats')
+library('lubridate')
+library('plotly')
+library('dplyr')
+library('PerformanceAnalytics')
+library('FinancialInstrument')
+library('foreach')
+library('corrplot')
+library('webshot')
+library('data.table')
+library('tidyverse')
+
+@
+
+
+
+
+\title{\definesamplelabel{}\\ \definesamplename{}}
+
+\author{MPA}
+
+\maketitle
+
+\thispagestyle{empty}
+
+
+\begingroup
+\tableofcontents
+\let\clearpage\relax
+\endgroup
+
+\clearpage
+
+\thispagestyle{empty}
+
+\begingroup
+\listoffigures
+\let\clearpage\relax
+\listoftables
+\endgroup
+
+
+\clearpage
+
+\thispagestyle{empty}
+
+
+\chapter*{Materials}
+
+\setcounter{chapter}{1}
+
+<<Get Symbols Materials, echo=FALSE, results='hide',include=FALSE>>=
+
+listaMaterials <- c("ALB","AMCR","APD","AVY","BALL","CE","CF","CTVA","DD",
+"DOW","ECL","EMN","FCX","FMC","IFF","IP","LIN","LYB","MLM","MOS","NEM","NUE",
+"PKG","PPG","SEE","SHW","VMC","WRK")
+
+getSymbols(listaMaterials,auto.assign = TRUE, from="2015-11-01",to=Sys.Date()+1)
+
+@
+
+\section{Materials TTR Plots}
+
+
+<<Tutankamon_Materials ,fig.keep='all', warning=FALSE,message=FALSE ,echo=FALSE,fig=TRUE, fig.align='center', results='hide', out.width="1.1\\linewidth", fig.cap=listaMaterials>>=
+
+fun_gen_plts = function(x){
+ 
+  chartSeries(get(x),
+              name = x,
+              TA=' addBBands();
+                   addBBands(draw="p");
+                   addVo();
+                   addMACD();
+                   addADX();
+                   addATR();
+                   addEnvelope();
+                   addCCI();
+                   addCMO();
+                   addDPO();
+                   addRSI();
+                   addSMI();
+                   addWPR();
+                   addCMF();
+                   addKST();
+                   addAroon();
+                   addTDI();
+                   addMFI();
+                   addSAR(accel = c(0.2, 0.2),col=1);
+                   addSMA(n = 20, on = 1, with.col = Cl, overlay = TRUE, col = "green");
+                   addSMA(n = 50, on = 1, with.col = Cl, overlay = TRUE, col = "blue");
+                   addSMA(n = 200, on = 1, with.col = Cl, overlay = TRUE, col = "red");
+                   ',subset='last 3 months', theme = "white"
+              )
+ 
+
+}
+
+i=1
+
+
+for(i in i:length(listaMaterials)){
+ 
+fun_gen_plts(listaMaterials[i])
+ 
+i=i+1
+ 
+}
+
+@
+
+<<parameters Materials, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_sim_Materials = function(x){
+ 
+  i=1
+ 
+  testMaterials <- as.xts()
+ 
+  finalMaterials <- as.xts()
+ 
+  for (i in i:length(listaMaterials)) {
+   
+    testMaterials[[i]] <- getSymbols(listaSPMaterials[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalMaterials <- append(finalMaterials[[i]],testMaterials[[i]])
+   
+  }
+ 
+  return(finalMaterials)
+ 
+}
+
+
+fun_gen_tab_Materials = function(y){
+ 
+ y <- list()
+ Openy <- list()
+ Closey <- list()
+ Diffy <- list()
+ CltoCly <- list()
+ ClosePrevy <- list()
+ Weeky <- list()
+ Monthy <- list()
+ Yeary <- list()
+ Fivey <- list()
+
+for(i in 1:length(listaMaterials)){
+ 
+y[[i]] <- getSymbols(listaMaterials[i],auto.assign = FALSE,from="2015-11-01",to=Sys.Date()+1 ,return.class="xts")
+
+
+y[[i]] <- na.locf(y[[i]], xout=seq(head(index(y[[i]]),1),tail(index(y[[i]]),1),by="1 day"))
+Openy[[i]] <- as.numeric(y[[i]][end(y[[i]]),1])
+Closey[[i]] <- as.numeric(y[[i]][end(y[[i]]),4])
+Diffy[[i]] <- (Closey[[i]]-Openy[[i]])*100/Openy[[i]]
+
+ClosePrevy[[i]] <- as.numeric(y[[i]][end(y[[i]])-1,4])
+
+CltoCly[[i]] <- (Closey[[i]]-ClosePrevy[[i]])*100/ClosePrevy[[i]]
+
+Weeky[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-7,1])) *100 / as.numeric(y[[i]][end(y[[i]])-7,1])
+
+
+Monthy[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-30,4])) *100 / as.numeric(y[[i]][end(y[[i]])-30,4])
+
+
+
+Yeary[[i]] <-(as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]]["2021-01-01",4])) *100 / as.numeric(y[[i]]["2021-01-01",4])
+
+if(length(Yeary[[i]])==0){Yeary[[i]]= NA} else {format(round(Yeary[[i]],digits = 2),nsmall=2)}
+
+
+Fivey[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-1825,4])) *100 / as.numeric(y[[i]][end(y[[i]])-1825,4])
+
+if(length(Fivey[[i]])==0){Fivey[[i]]= NA} else {format(round(Fivey[[i]],digits = 2),nsmall=2)}
+
+
+
+}
+ 
+ResTab <- data.frame()
+ 
+ResTab <- rbind(Diffy,CltoCly,Weeky,Monthy,Yeary,Fivey)
+ 
+
+colnames(ResTab) <- listaMaterials
+
+
+ResTab_transpose <- as.data.frame(t(as.matrix(ResTab)))
+
+format.data.frame(ResTab_transpose, digits =2)
+
+ 
+return(as.data.frame(ResTab_transpose))
+ 
+}
+
+
+
+fun_gen_sim_Materials = function(x){
+ 
+  i=1
+ 
+  testMaterials <- as.xts()
+ 
+  finalMaterials <- as.xts()
+ 
+  for (i in i:length(listaMaterials)) {
+   
+    testMaterials[[i]] <- getSymbols(listaMaterials[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalMaterials <- append(finalMaterials[[i]],testMaterials[[i]])
+   
+  }
+ 
+  return(finalMaterials)
+ 
+}
+
+@
+
+
+\subsection{Variation for Materials}
+
+<<Table_Variance_y_Materials , echo=FALSE, results = "asis" >>=
+
+table.Materials <- fun_gen_tab_Materials(listaMaterials)
+ 
+ 
+
+colnames(table.Materials) <- c("Day","CloseToClose", "Week","Month","Year","5 Years")
+rownames(table.Materials) <- listaMaterials
+
+tex.tableMaterials <- xtable(table.Materials)
+caption(tex.tableMaterials) <- sprintf("Variance for Materials")
+print(tex.tableMaterials,
+      sep='\n' )
+
+@
+
+
+<<parameters z1 Materials, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_fun_Materials = function(){
+
+
+FundAnalysis_z  <- c()
+MarketCap    <- c()
+EarningsShare <- c()
+PERatio      <- c()
+BookValue    <- c()
+DividendYield <- c()
+DividendPayDate <- c()
+EarningsTimeStamp <- c()
+PriceEPSEstimate <- c()
+EarningsStartTime <- c()
+EPSForwaerd        <- c()
+EarningsEndTime  <- c()
+PriceBook        <- c()
+ExDividendDate   <- c()
+ChangeMA50       <- c()
+ChangeMA200       <- c()
+
+
+i=1
+
+for (i in i:length(listaMaterials)){
+ 
+FundAnalysis_z[[i]] <- getQuote(listaMaterials[i], what = yahooQF(c("Market Capitalization","Earnings/Share","P/E Ratio","Book Value","Dividend Yield","Dividend Pay Date","Earnings Timestamp","Price/EPS Estimate Next Year", "Earnings Start Time","EPS Forward","Earnings End Time","Price/Book","Ex-Dividend Date","Change From 50-day Moving Average","Change From 200-day Moving Average")))
+
+MarketCap[[i]] <- FundAnalysis_z[[i]]$`Market Capitalization`
+EarningsShare[[i]] <- FundAnalysis_z[[i]]$`Earnings/Share`
+PERatio[[i]]       <- FundAnalysis_z[[i]]$`P/E Ratio`
+BookValue[[i]]     <- FundAnalysis_z[[i]]$`Book Value`
+DividendYield[[i]] <- FundAnalysis_z[[i]]$`Dividend Yield`
+DividendPayDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Dividend Pay Date`, origin = "1970-01-01")
+EarningsTimeStamp[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Timestamp`, origin = "1970-01-01")
+PriceEPSEstimate[[i]] <- FundAnalysis_z[[i]]$`Price/EPS Estimate Next Year`
+EarningsStartTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Start Time`, origin = "1970-01-01")
+EPSForwaerd[[i]] <- FundAnalysis_z[[i]]$`EPS Forward`
+EarningsEndTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings End Time`,origin = "1970-01-01")
+PriceBook[[i]] <- FundAnalysis_z[[i]]$`Price/Book`
+ExDividendDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Ex-Dividend Date`, origin = "1970-01-01")
+ChangeMA50[[i]] <- FundAnalysis_z[[i]]$`Change From 50-day MA`
+ChangeMA200[[i]] <- FundAnalysis_z[[i]]$`Change From 200-day MA`}
+
+ResFunAn <- data.frame()
+
+ResFunAn <- rbind(MarketCap,
+                  EarningsShare,
+                  PERatio,
+                  BookValue,
+                  DividendYield,
+                  DividendPayDate,
+                  EarningsTimeStamp,
+                  PriceEPSEstimate,
+                  EarningsStartTime,
+                  EPSForwaerd,
+                  EarningsEndTime,
+                  PriceBook,
+                  ExDividendDate,
+                  ChangeMA50,
+                  ChangeMA200)
+
+return(ResFunAn)
+
+}
+
+
+@
+
+
+\newpage
+
+
+\section{Fundamental Analysis Tables Materials}
+
+<<Table_Final_Fundamental_analysis_Materials , echo=FALSE, results = "asis" >>=
+
+
+Par_fund_an_Materials <- as.data.frame(fun_gen_fun_Materials())
+
+setnames(Par_fund_an_Materials, listaMaterials)
+
+Fund_An_Tab_Res_Materials <- as.data.frame(matrix("", ncol = 1, nrow = 15))
+
+
+
+i=1
+
+for (i in i:length(listaMaterials)) {
+
+
+Fund_An_Tab_Res_Materials <- Par_fund_an_Materials[listaMaterials[i]]
+
+
+
+New_Fund_An_Tab_Res1Materials <- Par_fund_an_Materials[[1,i]]
+
+New_Fund_An_Tab_Res2Materials <- Par_fund_an_Materials[[2,i]]
+
+New_Fund_An_Tab_Res3Materials <-  Par_fund_an_Materials[[3,i]]
+
+New_Fund_An_Tab_Res4Materials <-  Par_fund_an_Materials[[4,i]]
+
+New_Fund_An_Tab_Res5Materials <-  Par_fund_an_Materials[[5,i]]
+
+New_Fund_An_Tab_Res6Materials <- Par_fund_an_Materials[[6,i]]
+
+New_Fund_An_Tab_Res7Materials <- Par_fund_an_Materials[[7,i]]
+
+New_Fund_An_Tab_Res8Materials <- Par_fund_an_Materials[[8,i]]
+
+New_Fund_An_Tab_Res9Materials <- Par_fund_an_Materials[[9,i]]
+
+New_Fund_An_Tab_Res10Materials <-  Par_fund_an_Materials[[10,i]]
+
+New_Fund_An_Tab_Res11Materials <- Par_fund_an_Materials[[11,i]]
+
+New_Fund_An_Tab_Res12Materials <- Par_fund_an_Materials[[12,i]]
+
+New_Fund_An_Tab_Res13Materials <- Par_fund_an_Materials[[13,i]]
+
+New_Fund_An_Tab_Res14Materials <-  Par_fund_an_Materials[[14,i]]
+
+New_Fund_An_Tab_Res15Materials <- Par_fund_an_Materials[[15,i]]
+
+
+table.FundAnalysisDMY_Materials <- matrix("", ncol = 2, nrow = 15)
+
+colnames(table.FundAnalysisDMY_Materials) <- c("Parameter", "Value")
+
+table.FundAnalysisDMY_Materials[1,1] <- "Market Capitalization"
+table.FundAnalysisDMY_Materials[1,2] <- sprintf("%.8g",New_Fund_An_Tab_Res1Materials)
+
+
+table.FundAnalysisDMY_Materials[2,1] <- "P/E Ratio"
+table.FundAnalysisDMY_Materials[2,2] <- sprintf("%.2f",New_Fund_An_Tab_Res3Materials)
+
+
+table.FundAnalysisDMY_Materials[3,1] <- "Earnings / Share"
+table.FundAnalysisDMY_Materials[3,2] <- sprintf("%.2f",New_Fund_An_Tab_Res2Materials)
+
+
+table.FundAnalysisDMY_Materials[4,1] <- "Price / Book"
+table.FundAnalysisDMY_Materials[4,2] <- sprintf("%.2f",New_Fund_An_Tab_Res12Materials)
+
+
+table.FundAnalysisDMY_Materials[5,1] <- "Book Value"
+table.FundAnalysisDMY_Materials[5,2] <- sprintf("%.2f",New_Fund_An_Tab_Res4Materials)
+
+
+table.FundAnalysisDMY_Materials[6,1] <- "EPS Forward"
+table.FundAnalysisDMY_Materials[6,2] <- sprintf("%.2f",New_Fund_An_Tab_Res10Materials)
+
+
+table.FundAnalysisDMY_Materials[7,1] <- "Price EPS Estimate Next Year"
+table.FundAnalysisDMY_Materials[7,2] <- sprintf("%.2f",New_Fund_An_Tab_Res8Materials)
+
+
+table.FundAnalysisDMY_Materials[8,1] <- "Dividend Yield"
+table.FundAnalysisDMY_Materials[8,2] <- sprintf("%.6f",New_Fund_An_Tab_Res5Materials)
+
+
+table.FundAnalysisDMY_Materials[9,1] <- "Dividend Pay Date"
+table.FundAnalysisDMY_Materials[9,2] <- sprintf("%s",New_Fund_An_Tab_Res6Materials)
+
+table.FundAnalysisDMY_Materials[10,1] <- "Dividend Ex-Date"
+table.FundAnalysisDMY_Materials[10,2] <- sprintf("%s",New_Fund_An_Tab_Res13Materials)
+
+
+table.FundAnalysisDMY_Materials[11,1] <- "Earnings Time Stamp"
+table.FundAnalysisDMY_Materials[11,2] <- sprintf("%s",New_Fund_An_Tab_Res7Materials)
+
+table.FundAnalysisDMY_Materials[12,1] <- "Earnings Start Time"
+table.FundAnalysisDMY_Materials[12,2] <- sprintf("%s",New_Fund_An_Tab_Res9Materials)
+
+table.FundAnalysisDMY_Materials[13,1] <- "Earnings End Time"
+table.FundAnalysisDMY_Materials[13,2] <- sprintf("%s",New_Fund_An_Tab_Res11Materials)
+
+table.FundAnalysisDMY_Materials[14,1] <- "Change From 50-day Moving Average"
+table.FundAnalysisDMY_Materials[14,2] <- sprintf("%.2f",New_Fund_An_Tab_Res14Materials)
+
+table.FundAnalysisDMY_Materials[15,1] <- "Change From 200-day Moving Average"
+table.FundAnalysisDMY_Materials[15,2] <- sprintf("%.2f",New_Fund_An_Tab_Res15Materials)
+
+
+tex.table.FundAnalysisDMY_Materials <- xtable(table.FundAnalysisDMY_Materials)
+caption(tex.table.FundAnalysisDMY_Materials) <- sprintf("Fundamental Analysis parameters for %s", listaMaterials[i])
+print(tex.table.FundAnalysisDMY_Materials,
+      include.rownames = FALSE,
+      caption.placement = "top",
+      table.placement = "ht")
+
+
+}
+
+
+
+@
+
+\FloatBarrier
+
+\clearpage
+
+
+\thispagestyle{empty}
+
+\end{document}
+
+
+

@@ -1,0 +1,919 @@
+\documentclass[a4paper]{book}
+\usepackage{amssymb}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{bm}
+\usepackage{pstricks}
+\usepackage{qrcode}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{booktabs,tabularx,dcolumn}
+\usepackage{caption}
+\usepackage{xcolor, colortbl}
+\usepackage{changepage}
+\usepackage{fontspec}
+\usepackage{array}
+\usepackage{lastpage}
+\usepackage{color}  
+\usepackage{hyperref}
+\usepackage{cleveref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=black,  %choose some color if you want links to stand out
+}
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{morefloats}
+\usepackage[section]{placeins}
+
+\newcommand{\definesamplelabel}{MPLP Inc.}
+\newcommand{\definesamplename}{Health Care}
+\newcommand{\definesampleauthor}{MPA}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\definesamplelabel{}}
+\lhead{\definesamplename{}}
+\rfoot{Page \thepage}
+\cfoot{v. Foundation}
+\lfoot{Analyst: \definesampleauthor}
+
+\maxdeadcycles=200
+
+\begin{document}
+
+<<Create_PDF,include=FALSE, results='hide'>>=
+
+library(knitr)
+opts_chunk$set(concordance=TRUE)
+@
+
+<<setup, include=FALSE, cache=FALSE>>=
+muffleError <- function(x,options) {}
+knit_hooks$set(error=muffleError)
+@
+
+<<Libraries_install,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+install.packages("devtools")
+remotes::install_github("joshuaulrich/quantmod@358-getsymbols-new.session")
+install.packages("xts")
+install.packages("rvest")
+install.packages("tidyverse")
+install.packages("stringr")
+install.packages("forcats")
+install.packages("lubridate")
+install.packages("plotly")
+install.packages("dplyr")
+install.packages("PerformanceAnalytics")
+install.packages("FinancialInstrument")
+install.packages("foreach")
+install.packages("corrplot")
+install.packages("webshot")
+install.packages("data.table")
+@
+
+
+<<Libraries,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+library('knitr')
+library('xtable')
+library('quantmod')
+library('xts')
+library('rvest')
+library('tidyverse')
+library('stringr')
+library('forcats')
+library('lubridate')
+library('plotly')
+library('dplyr')
+library('PerformanceAnalytics')
+library('FinancialInstrument')
+library('foreach')
+library('corrplot')
+library('webshot')
+library('data.table')
+library('tidyverse')
+
+@
+
+
+
+
+\title{\definesamplelabel{}\\ \definesamplename{}}
+
+\author{MPA}
+
+\maketitle
+
+\thispagestyle{empty}
+
+
+\begingroup
+\tableofcontents
+\let\clearpage\relax
+\endgroup
+
+\clearpage
+
+\thispagestyle{empty}
+
+\begingroup
+\listoffigures
+\let\clearpage\relax
+\listoftables
+\endgroup
+
+
+\clearpage
+
+\thispagestyle{empty}
+
+
+
+
+\chapter*{Health Care}
+
+
+\setcounter{chapter}{1}
+
+<<Get Symbols HealthCare1, echo=FALSE, results='hide',include=FALSE>>=
+
+listaHealthCare1 <- c("A","ABBV","ABC","ABMD","ABT","ALGN","AMGN","ANTM",
+"BAX","BDX","BIIB","BIO","BMY","BSX","CAH","CERN","CI","CNC","COO","CRL",
+"CTLT","CVS","DGX","DHR","DVA","DXCM","EW","GILD","HCA","HOLX","HSIC","HUM")
+
+getSymbols(listaHealthCare1,auto.assign = TRUE, from="2015-11-01",to=Sys.Date()+1)
+
+listaHealthCare2 <- c("IDXX","ILMN","INCY","IQV","ISRG","JNJ","LH","LLY","MCK","MDT","MOH","MRK","MRNA","MDT","OGN","PFE","PKI","REGN",
+"RMD","STE","SYK","TECH","TFX","TMO","UHS","UNH","VRTX","VRTS",
+"WAT","WST","XRAY","ZBH","ZTS")
+
+
+getSymbols(listaHealthCare2,auto.assign = TRUE, from="2015-11-01",to=Sys.Date()+1)
+
+@
+
+\section{HealthCare TTR Plots}
+
+
+<<Tutankamon_HealthCare1 ,fig.keep='all', warning=FALSE,message=FALSE ,echo=FALSE,fig=TRUE, fig.align='center', results='hide', out.width="1.1\\linewidth", fig.cap=listaHealthCare1>>=
+
+fun_gen_plts = function(x){
+ 
+  chartSeries(get(x),
+              name = x,
+              TA=' addBBands();
+                   addBBands(draw="p");
+                   addVo();
+                   addMACD();
+                   addADX();
+                   addATR();
+                   addEnvelope();
+                   addCCI();
+                   addCMO();
+                   addDPO();
+                   addRSI();
+                   addSMI();
+                   addWPR();
+                   addCMF();
+                   addKST();
+                   addAroon();
+                   addTDI();
+                   addMFI();
+                   addSAR(accel = c(0.2, 0.2),col=1);
+                   addSMA(n = 20, on = 1, with.col = Cl, overlay = TRUE, col = "green");
+                   addSMA(n = 50, on = 1, with.col = Cl, overlay = TRUE, col = "blue");
+                   addSMA(n = 200, on = 1, with.col = Cl, overlay = TRUE, col = "red");
+                   ',subset='last 3 months', theme = "white"
+              )
+ 
+
+}
+
+i=1
+
+
+for(i in i:length(listaHealthCare1)){
+ 
+fun_gen_plts(listaHealthCare1[i])
+ 
+i=i+1
+ 
+}
+
+@
+
+
+<<Tutankamon_HealthCare2 ,fig.keep='all', warning=FALSE,message=FALSE ,echo=FALSE,fig=TRUE, fig.align='center', results='hide', out.width="1.1\\linewidth", fig.cap=listaHealthCare2>>=
+
+fun_gen_plts = function(x){
+ 
+  chartSeries(get(x),
+              name = x,
+              TA=' addBBands();
+                   addBBands(draw="p");
+                   addVo();
+                   addMACD();
+                   addADX();
+                   addATR();
+                   addEnvelope();
+                   addCCI();
+                   addCMO();
+                   addDPO();
+                   addRSI();
+                   addSMI();
+                   addWPR();
+                   addCMF();
+                   addKST();
+                   addAroon();
+                   addTDI();
+                   addMFI();
+                   addSAR(accel = c(0.2, 0.2),col=1);
+                   addSMA(n = 20, on = 1, with.col = Cl, overlay = TRUE, col = "green");
+                   addSMA(n = 50, on = 1, with.col = Cl, overlay = TRUE, col = "blue");
+                   addSMA(n = 200, on = 1, with.col = Cl, overlay = TRUE, col = "red");
+                   ',subset='last 3 months', theme = "white"
+              )
+ 
+
+}
+
+i=1
+
+
+for(i in i:length(listaHealthCare2)){
+ 
+fun_gen_plts(listaHealthCare2[i])
+ 
+i=i+1
+ 
+}
+
+@
+
+<<parameters HealthCare1, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_sim_HealthCare1 = function(x){
+ 
+  i=1
+ 
+  testHealthCare1 <- as.xts()
+ 
+  finalHealthCare1 <- as.xts()
+ 
+  for (i in i:length(listaHealthCare1)) {
+   
+    testHealthCare1[[i]] <- getSymbols(listaSPHealthCare1[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalHealthCare1 <- append(finalHealthCare1[[i]],testHealthCare1[[i]])
+   
+  }
+ 
+  return(finalHealthCare1)
+ 
+}
+
+
+fun_gen_tab_HealthCare1 = function(y){
+ 
+ y <- list()
+ Openy <- list()
+ Closey <- list()
+ Diffy <- list()
+ CltoCly <- list()
+ ClosePrevy <- list()
+ Weeky <- list()
+ Monthy <- list()
+ Yeary <- list()
+ Fivey <- list()
+
+for(i in 1:length(listaHealthCare1)){
+ 
+y[[i]] <- getSymbols(listaHealthCare1[i],auto.assign = FALSE,from="2015-11-01",to=Sys.Date()+1 ,return.class="xts")
+
+
+y[[i]] <- na.locf(y[[i]], xout=seq(head(index(y[[i]]),1),tail(index(y[[i]]),1),by="1 day"))
+Openy[[i]] <- as.numeric(y[[i]][end(y[[i]]),1])
+Closey[[i]] <- as.numeric(y[[i]][end(y[[i]]),4])
+Diffy[[i]] <- (Closey[[i]]-Openy[[i]])*100/Openy[[i]]
+
+ClosePrevy[[i]] <- as.numeric(y[[i]][end(y[[i]])-1,4])
+
+CltoCly[[i]] <- (Closey[[i]]-ClosePrevy[[i]])*100/ClosePrevy[[i]]
+
+Weeky[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-7,1])) *100 / as.numeric(y[[i]][end(y[[i]])-7,1])
+
+
+Monthy[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-30,4])) *100 / as.numeric(y[[i]][end(y[[i]])-30,4])
+
+
+
+Yeary[[i]] <-(as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]]["2021-01-01",4])) *100 / as.numeric(y[[i]]["2021-01-01",4])
+
+if(length(Yeary[[i]])==0){Yeary[[i]]= NA} else {format(round(Yeary[[i]],digits = 2),nsmall=2)}
+
+
+Fivey[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-1825,4])) *100 / as.numeric(y[[i]][end(y[[i]])-1825,4])
+
+if(length(Fivey[[i]])==0){Fivey[[i]]= NA} else {format(round(Fivey[[i]],digits = 2),nsmall=2)}
+
+
+
+}
+ 
+ResTab <- data.frame()
+ 
+ResTab <- rbind(Diffy,CltoCly,Weeky,Monthy,Yeary,Fivey)
+ 
+
+colnames(ResTab) <- listaHealthCare1
+
+
+ResTab_transpose <- as.data.frame(t(as.matrix(ResTab)))
+
+format.data.frame(ResTab_transpose, digits =2)
+
+ 
+return(as.data.frame(ResTab_transpose))
+ 
+}
+
+
+
+fun_gen_sim_HealthCare1 = function(x){
+ 
+  i=1
+ 
+  testHealthCare1 <- as.xts()
+ 
+  finalHealthCare1 <- as.xts()
+ 
+  for (i in i:length(listaHealthCare1)) {
+   
+    testHealthCare1[[i]] <- getSymbols(listaHealthCare1[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalHealthCare1 <- append(finalHealthCare1[[i]],testHealthCare1[[i]])
+   
+  }
+ 
+  return(finalHealthCare1)
+ 
+}
+
+@
+
+
+<<parameters HealthCare2, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_sim_HealthCare2 = function(x){
+ 
+  i=1
+ 
+  testHealthCare2 <- as.xts()
+ 
+  finalHealthCare2 <- as.xts()
+ 
+  for (i in i:length(listaHealthCare2)) {
+   
+    testHealthCare2[[i]] <- getSymbols(listaSPHealthCare2[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalHealthCare2 <- append(finalHealthCare2[[i]],testHealthCare2[[i]])
+   
+  }
+ 
+  return(finalHealthCare2)
+ 
+}
+
+
+fun_gen_tab_HealthCare2 = function(y){
+ 
+ y <- list()
+ Openy <- list()
+ Closey <- list()
+ Diffy <- list()
+ CltoCly <- list()
+ ClosePrevy <- list()
+ Weeky <- list()
+ Monthy <- list()
+ Yeary <- list()
+ Fivey <- list()
+
+for(i in 1:length(listaHealthCare2)){
+ 
+y[[i]] <- getSymbols(listaHealthCare2[i],auto.assign = FALSE,from="2015-11-01",to=Sys.Date()+1 ,return.class="xts")
+
+
+y[[i]] <- na.locf(y[[i]], xout=seq(head(index(y[[i]]),1),tail(index(y[[i]]),1),by="1 day"))
+Openy[[i]] <- as.numeric(y[[i]][end(y[[i]]),1])
+Closey[[i]] <- as.numeric(y[[i]][end(y[[i]]),4])
+Diffy[[i]] <- (Closey[[i]]-Openy[[i]])*100/Openy[[i]]
+
+ClosePrevy[[i]] <- as.numeric(y[[i]][end(y[[i]])-1,4])
+
+CltoCly[[i]] <- (Closey[[i]]-ClosePrevy[[i]])*100/ClosePrevy[[i]]
+
+Weeky[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-7,1])) *100 / as.numeric(y[[i]][end(y[[i]])-7,1])
+
+
+Monthy[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-30,4])) *100 / as.numeric(y[[i]][end(y[[i]])-30,4])
+
+
+
+Yeary[[i]] <-(as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]]["2021-01-01",4])) *100 / as.numeric(y[[i]]["2021-01-01",4])
+
+if(length(Yeary[[i]])==0){Yeary[[i]]= NA} else {format(round(Yeary[[i]],digits = 2),nsmall=2)}
+
+
+Fivey[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-1825,4])) *100 / as.numeric(y[[i]][end(y[[i]])-1825,4])
+
+if(length(Fivey[[i]])==0){Fivey[[i]]= NA} else {format(round(Fivey[[i]],digits = 2),nsmall=2)}
+
+
+
+}
+ 
+ResTab <- data.frame()
+ 
+ResTab <- rbind(Diffy,CltoCly,Weeky,Monthy,Yeary,Fivey)
+ 
+
+colnames(ResTab) <- listaHealthCare2
+
+
+ResTab_transpose <- as.data.frame(t(as.matrix(ResTab)))
+
+format.data.frame(ResTab_transpose, digits =2)
+
+ 
+return(as.data.frame(ResTab_transpose))
+ 
+}
+
+
+
+fun_gen_sim_HealthCare2 = function(x){
+ 
+  i=1
+ 
+  testHealthCare2 <- as.xts()
+ 
+  finalHealthCare2 <- as.xts()
+ 
+  for (i in i:length(listaHealthCare2)) {
+   
+    testHealthCare2[[i]] <- getSymbols(listaHealthCare2[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalHealthCare2 <- append(finalHealthCare2[[i]],testHealthCare2[[i]])
+   
+  }
+ 
+  return(finalHealthCare2)
+ 
+}
+
+@
+
+
+
+\subsection{Variation for Health Care}
+
+<<Table_Variance_y_HealthCare1 , echo=FALSE, results = "asis" >>=
+
+table.HealthCare1 <- fun_gen_tab_HealthCare1(listaHealthCare1)
+ 
+ 
+
+colnames(table.HealthCare1) <- c("Day","CloseToClose", "Week","Month","Year","5 Years")
+rownames(table.HealthCare1) <- listaHealthCare1
+
+tex.tableHealthCare1 <- xtable(table.HealthCare1)
+caption(tex.tableHealthCare1) <- sprintf("Variance for HealthCare1")
+print(tex.tableHealthCare1,
+      sep='\n' )
+
+@
+
+
+<<parameters z1 HealthCare1, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_fun_HealthCare1 = function(){
+
+
+FundAnalysis_z  <- c()
+MarketCap    <- c()
+EarningsShare <- c()
+PERatio      <- c()
+BookValue    <- c()
+DividendYield <- c()
+DividendPayDate <- c()
+EarningsTimeStamp <- c()
+PriceEPSEstimate <- c()
+EarningsStartTime <- c()
+EPSForwaerd        <- c()
+EarningsEndTime  <- c()
+PriceBook        <- c()
+ExDividendDate   <- c()
+ChangeMA50       <- c()
+ChangeMA200       <- c()
+
+
+i=1
+
+for (i in i:length(listaHealthCare1)){
+ 
+FundAnalysis_z[[i]] <- getQuote(listaHealthCare1[i], what = yahooQF(c("Market Capitalization","Earnings/Share","P/E Ratio","Book Value","Dividend Yield","Dividend Pay Date","Earnings Timestamp","Price/EPS Estimate Next Year", "Earnings Start Time","EPS Forward","Earnings End Time","Price/Book","Ex-Dividend Date","Change From 50-day Moving Average","Change From 200-day Moving Average")))
+
+MarketCap[[i]] <- FundAnalysis_z[[i]]$`Market Capitalization`
+EarningsShare[[i]] <- FundAnalysis_z[[i]]$`Earnings/Share`
+PERatio[[i]]       <- FundAnalysis_z[[i]]$`P/E Ratio`
+BookValue[[i]]     <- FundAnalysis_z[[i]]$`Book Value`
+DividendYield[[i]] <- FundAnalysis_z[[i]]$`Dividend Yield`
+DividendPayDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Dividend Pay Date`, origin = "1970-01-01")
+EarningsTimeStamp[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Timestamp`, origin = "1970-01-01")
+PriceEPSEstimate[[i]] <- FundAnalysis_z[[i]]$`Price/EPS Estimate Next Year`
+EarningsStartTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Start Time`, origin = "1970-01-01")
+EPSForwaerd[[i]] <- FundAnalysis_z[[i]]$`EPS Forward`
+EarningsEndTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings End Time`,origin = "1970-01-01")
+PriceBook[[i]] <- FundAnalysis_z[[i]]$`Price/Book`
+ExDividendDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Ex-Dividend Date`, origin = "1970-01-01")
+ChangeMA50[[i]] <- FundAnalysis_z[[i]]$`Change From 50-day MA`
+ChangeMA200[[i]] <- FundAnalysis_z[[i]]$`Change From 200-day MA`}
+
+ResFunAn <- data.frame()
+
+ResFunAn <- rbind(MarketCap,
+                  EarningsShare,
+                  PERatio,
+                  BookValue,
+                  DividendYield,
+                  DividendPayDate,
+                  EarningsTimeStamp,
+                  PriceEPSEstimate,
+                  EarningsStartTime,
+                  EPSForwaerd,
+                  EarningsEndTime,
+                  PriceBook,
+                  ExDividendDate,
+                  ChangeMA50,
+                  ChangeMA200)
+
+return(ResFunAn)
+
+}
+
+<<Table_Variance_y_HealthCare2 , echo=FALSE, results = "asis" >>=
+
+table.HealthCare2 <- fun_gen_tab_HealthCare2(listaHealthCare2)
+ 
+ 
+
+colnames(table.HealthCare2) <- c("Day","CloseToClose", "Week","Month","Year","5 Years")
+rownames(table.HealthCare2) <- listaHealthCare2
+
+tex.tableHealthCare2 <- xtable(table.HealthCare2)
+caption(tex.tableHealthCare2) <- sprintf("Variance for Health Care")
+print(tex.tableHealthCare2,
+      sep='\n' )
+
+@
+
+
+<<parameters z1 HealthCare2, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_fun_HealthCare2 = function(){
+
+
+FundAnalysis_z  <- c()
+MarketCap    <- c()
+EarningsShare <- c()
+PERatio      <- c()
+BookValue    <- c()
+DividendYield <- c()
+DividendPayDate <- c()
+EarningsTimeStamp <- c()
+PriceEPSEstimate <- c()
+EarningsStartTime <- c()
+EPSForwaerd        <- c()
+EarningsEndTime  <- c()
+PriceBook        <- c()
+ExDividendDate   <- c()
+ChangeMA50       <- c()
+ChangeMA200       <- c()
+
+
+i=1
+
+for (i in i:length(listaHealthCare2)){
+ 
+FundAnalysis_z[[i]] <- getQuote(listaHealthCare2[i], what = yahooQF(c("Market Capitalization","Earnings/Share","P/E Ratio","Book Value","Dividend Yield","Dividend Pay Date","Earnings Timestamp","Price/EPS Estimate Next Year", "Earnings Start Time","EPS Forward","Earnings End Time","Price/Book","Ex-Dividend Date","Change From 50-day Moving Average","Change From 200-day Moving Average")))
+
+MarketCap[[i]] <- FundAnalysis_z[[i]]$`Market Capitalization`
+EarningsShare[[i]] <- FundAnalysis_z[[i]]$`Earnings/Share`
+PERatio[[i]]       <- FundAnalysis_z[[i]]$`P/E Ratio`
+BookValue[[i]]     <- FundAnalysis_z[[i]]$`Book Value`
+DividendYield[[i]] <- FundAnalysis_z[[i]]$`Dividend Yield`
+DividendPayDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Dividend Pay Date`, origin = "1970-01-01")
+EarningsTimeStamp[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Timestamp`, origin = "1970-01-01")
+PriceEPSEstimate[[i]] <- FundAnalysis_z[[i]]$`Price/EPS Estimate Next Year`
+EarningsStartTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Start Time`, origin = "1970-01-01")
+EPSForwaerd[[i]] <- FundAnalysis_z[[i]]$`EPS Forward`
+EarningsEndTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings End Time`,origin = "1970-01-01")
+PriceBook[[i]] <- FundAnalysis_z[[i]]$`Price/Book`
+ExDividendDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Ex-Dividend Date`, origin = "1970-01-01")
+ChangeMA50[[i]] <- FundAnalysis_z[[i]]$`Change From 50-day MA`
+ChangeMA200[[i]] <- FundAnalysis_z[[i]]$`Change From 200-day MA`}
+
+ResFunAn <- data.frame()
+
+ResFunAn <- rbind(MarketCap,
+                  EarningsShare,
+                  PERatio,
+                  BookValue,
+                  DividendYield,
+                  DividendPayDate,
+                  EarningsTimeStamp,
+                  PriceEPSEstimate,
+                  EarningsStartTime,
+                  EPSForwaerd,
+                  EarningsEndTime,
+                  PriceBook,
+                  ExDividendDate,
+                  ChangeMA50,
+                  ChangeMA200)
+
+return(ResFunAn)
+
+}
+
+
+@
+
+
+\newpage
+
+
+\section{Fundamental Analysis Tables Health Care}
+
+<<Table_Final_Fundamental_analysis_HealthCare1 , echo=FALSE, results = "asis" >>=
+
+
+Par_fund_an_HealthCare1 <- as.data.frame(fun_gen_fun_HealthCare1())
+
+setnames(Par_fund_an_HealthCare1, listaHealthCare1)
+
+Fund_An_Tab_Res_HealthCare1 <- as.data.frame(matrix("", ncol = 1, nrow = 15))
+
+
+
+i=1
+
+for (i in i:length(listaHealthCare1)) {
+
+
+Fund_An_Tab_Res_HealthCare1 <- Par_fund_an_HealthCare1[listaHealthCare1[i]]
+
+
+
+New_Fund_An_Tab_Res1HealthCare1 <- Par_fund_an_HealthCare1[[1,i]]
+
+New_Fund_An_Tab_Res2HealthCare1 <- Par_fund_an_HealthCare1[[2,i]]
+
+New_Fund_An_Tab_Res3HealthCare1 <-  Par_fund_an_HealthCare1[[3,i]]
+
+New_Fund_An_Tab_Res4HealthCare1 <-  Par_fund_an_HealthCare1[[4,i]]
+
+New_Fund_An_Tab_Res5HealthCare1 <-  Par_fund_an_HealthCare1[[5,i]]
+
+New_Fund_An_Tab_Res6HealthCare1 <- Par_fund_an_HealthCare1[[6,i]]
+
+New_Fund_An_Tab_Res7HealthCare1 <- Par_fund_an_HealthCare1[[7,i]]
+
+New_Fund_An_Tab_Res8HealthCare1 <- Par_fund_an_HealthCare1[[8,i]]
+
+New_Fund_An_Tab_Res9HealthCare1 <- Par_fund_an_HealthCare1[[9,i]]
+
+New_Fund_An_Tab_Res10HealthCare1 <-  Par_fund_an_HealthCare1[[10,i]]
+
+New_Fund_An_Tab_Res11HealthCare1 <- Par_fund_an_HealthCare1[[11,i]]
+
+New_Fund_An_Tab_Res12HealthCare1 <- Par_fund_an_HealthCare1[[12,i]]
+
+New_Fund_An_Tab_Res13HealthCare1 <- Par_fund_an_HealthCare1[[13,i]]
+
+New_Fund_An_Tab_Res14HealthCare1 <-  Par_fund_an_HealthCare1[[14,i]]
+
+New_Fund_An_Tab_Res15HealthCare1 <- Par_fund_an_HealthCare1[[15,i]]
+
+
+table.FundAnalysisDMY_HealthCare1 <- matrix("", ncol = 2, nrow = 15)
+
+colnames(table.FundAnalysisDMY_HealthCare1) <- c("Parameter", "Value")
+
+table.FundAnalysisDMY_HealthCare1[1,1] <- "Market Capitalization"
+table.FundAnalysisDMY_HealthCare1[1,2] <- sprintf("%.8g",New_Fund_An_Tab_Res1HealthCare1)
+
+
+table.FundAnalysisDMY_HealthCare1[2,1] <- "P/E Ratio"
+table.FundAnalysisDMY_HealthCare1[2,2] <- sprintf("%.2f",New_Fund_An_Tab_Res3HealthCare1)
+
+
+table.FundAnalysisDMY_HealthCare1[3,1] <- "Earnings / Share"
+table.FundAnalysisDMY_HealthCare1[3,2] <- sprintf("%.2f",New_Fund_An_Tab_Res2HealthCare1)
+
+
+table.FundAnalysisDMY_HealthCare1[4,1] <- "Price / Book"
+table.FundAnalysisDMY_HealthCare1[4,2] <- sprintf("%.2f",New_Fund_An_Tab_Res12HealthCare1)
+
+
+table.FundAnalysisDMY_HealthCare1[5,1] <- "Book Value"
+table.FundAnalysisDMY_HealthCare1[5,2] <- sprintf("%.2f",New_Fund_An_Tab_Res4HealthCare1)
+
+
+table.FundAnalysisDMY_HealthCare1[6,1] <- "EPS Forward"
+table.FundAnalysisDMY_HealthCare1[6,2] <- sprintf("%.2f",New_Fund_An_Tab_Res10HealthCare1)
+
+
+table.FundAnalysisDMY_HealthCare1[7,1] <- "Price EPS Estimate Next Year"
+table.FundAnalysisDMY_HealthCare1[7,2] <- sprintf("%.2f",New_Fund_An_Tab_Res8HealthCare1)
+
+
+table.FundAnalysisDMY_HealthCare1[8,1] <- "Dividend Yield"
+table.FundAnalysisDMY_HealthCare1[8,2] <- sprintf("%.6f",New_Fund_An_Tab_Res5HealthCare1)
+
+
+table.FundAnalysisDMY_HealthCare1[9,1] <- "Dividend Pay Date"
+table.FundAnalysisDMY_HealthCare1[9,2] <- sprintf("%s",New_Fund_An_Tab_Res6HealthCare1)
+
+table.FundAnalysisDMY_HealthCare1[10,1] <- "Dividend Ex-Date"
+table.FundAnalysisDMY_HealthCare1[10,2] <- sprintf("%s",New_Fund_An_Tab_Res13HealthCare1)
+
+
+table.FundAnalysisDMY_HealthCare1[11,1] <- "Earnings Time Stamp"
+table.FundAnalysisDMY_HealthCare1[11,2] <- sprintf("%s",New_Fund_An_Tab_Res7HealthCare1)
+
+table.FundAnalysisDMY_HealthCare1[12,1] <- "Earnings Start Time"
+table.FundAnalysisDMY_HealthCare1[12,2] <- sprintf("%s",New_Fund_An_Tab_Res9HealthCare1)
+
+table.FundAnalysisDMY_HealthCare1[13,1] <- "Earnings End Time"
+table.FundAnalysisDMY_HealthCare1[13,2] <- sprintf("%s",New_Fund_An_Tab_Res11HealthCare1)
+
+table.FundAnalysisDMY_HealthCare1[14,1] <- "Change From 50-day Moving Average"
+table.FundAnalysisDMY_HealthCare1[14,2] <- sprintf("%.2f",New_Fund_An_Tab_Res14HealthCare1)
+
+table.FundAnalysisDMY_HealthCare1[15,1] <- "Change From 200-day Moving Average"
+table.FundAnalysisDMY_HealthCare1[15,2] <- sprintf("%.2f",New_Fund_An_Tab_Res15HealthCare1)
+
+
+tex.table.FundAnalysisDMY_HealthCare1 <- xtable(table.FundAnalysisDMY_HealthCare1)
+caption(tex.table.FundAnalysisDMY_HealthCare1) <- sprintf("Fundamental Analysis parameters for %s", listaHealthCare1[i])
+print(tex.table.FundAnalysisDMY_HealthCare1,
+      include.rownames = FALSE,
+      caption.placement = "top",
+      table.placement = "ht")
+
+
+}
+
+
+
+@
+
+<<Table_Final_Fundamental_analysis_HealthCare2 , echo=FALSE, results = "asis" >>=
+
+
+Par_fund_an_HealthCare2 <- as.data.frame(fun_gen_fun_HealthCare2())
+
+setnames(Par_fund_an_HealthCare2, listaHealthCare2)
+
+Fund_An_Tab_Res_HealthCare2 <- as.data.frame(matrix("", ncol = 1, nrow = 15))
+
+
+
+i=1
+
+for (i in i:length(listaHealthCare2)) {
+
+
+Fund_An_Tab_Res_HealthCare2 <- Par_fund_an_HealthCare2[listaHealthCare2[i]]
+
+
+
+New_Fund_An_Tab_Res1HealthCare2 <- Par_fund_an_HealthCare2[[1,i]]
+
+New_Fund_An_Tab_Res2HealthCare2 <- Par_fund_an_HealthCare2[[2,i]]
+
+New_Fund_An_Tab_Res3HealthCare2 <-  Par_fund_an_HealthCare2[[3,i]]
+
+New_Fund_An_Tab_Res4HealthCare2 <-  Par_fund_an_HealthCare2[[4,i]]
+
+New_Fund_An_Tab_Res5HealthCare2 <-  Par_fund_an_HealthCare2[[5,i]]
+
+New_Fund_An_Tab_Res6HealthCare2 <- Par_fund_an_HealthCare2[[6,i]]
+
+New_Fund_An_Tab_Res7HealthCare2 <- Par_fund_an_HealthCare2[[7,i]]
+
+New_Fund_An_Tab_Res8HealthCare2 <- Par_fund_an_HealthCare2[[8,i]]
+
+New_Fund_An_Tab_Res9HealthCare2 <- Par_fund_an_HealthCare2[[9,i]]
+
+New_Fund_An_Tab_Res10HealthCare2 <-  Par_fund_an_HealthCare2[[10,i]]
+
+New_Fund_An_Tab_Res11HealthCare2 <- Par_fund_an_HealthCare2[[11,i]]
+
+New_Fund_An_Tab_Res12HealthCare2 <- Par_fund_an_HealthCare2[[12,i]]
+
+New_Fund_An_Tab_Res13HealthCare2 <- Par_fund_an_HealthCare2[[13,i]]
+
+New_Fund_An_Tab_Res14HealthCare2 <-  Par_fund_an_HealthCare2[[14,i]]
+
+New_Fund_An_Tab_Res15HealthCare2 <- Par_fund_an_HealthCare2[[15,i]]
+
+
+table.FundAnalysisDMY_HealthCare2 <- matrix("", ncol = 2, nrow = 15)
+
+colnames(table.FundAnalysisDMY_HealthCare2) <- c("Parameter", "Value")
+
+table.FundAnalysisDMY_HealthCare2[1,1] <- "Market Capitalization"
+table.FundAnalysisDMY_HealthCare2[1,2] <- sprintf("%.8g",New_Fund_An_Tab_Res1HealthCare2)
+
+
+table.FundAnalysisDMY_HealthCare2[2,1] <- "P/E Ratio"
+table.FundAnalysisDMY_HealthCare2[2,2] <- sprintf("%.2f",New_Fund_An_Tab_Res3HealthCare2)
+
+
+table.FundAnalysisDMY_HealthCare2[3,1] <- "Earnings / Share"
+table.FundAnalysisDMY_HealthCare2[3,2] <- sprintf("%.2f",New_Fund_An_Tab_Res2HealthCare2)
+
+
+table.FundAnalysisDMY_HealthCare2[4,1] <- "Price / Book"
+table.FundAnalysisDMY_HealthCare2[4,2] <- sprintf("%.2f",New_Fund_An_Tab_Res12HealthCare2)
+
+
+table.FundAnalysisDMY_HealthCare2[5,1] <- "Book Value"
+table.FundAnalysisDMY_HealthCare2[5,2] <- sprintf("%.2f",New_Fund_An_Tab_Res4HealthCare2)
+
+
+table.FundAnalysisDMY_HealthCare2[6,1] <- "EPS Forward"
+table.FundAnalysisDMY_HealthCare2[6,2] <- sprintf("%.2f",New_Fund_An_Tab_Res10HealthCare2)
+
+
+table.FundAnalysisDMY_HealthCare2[7,1] <- "Price EPS Estimate Next Year"
+table.FundAnalysisDMY_HealthCare2[7,2] <- sprintf("%.2f",New_Fund_An_Tab_Res8HealthCare2)
+
+
+table.FundAnalysisDMY_HealthCare2[8,1] <- "Dividend Yield"
+table.FundAnalysisDMY_HealthCare2[8,2] <- sprintf("%.6f",New_Fund_An_Tab_Res5HealthCare2)
+
+
+table.FundAnalysisDMY_HealthCare2[9,1] <- "Dividend Pay Date"
+table.FundAnalysisDMY_HealthCare2[9,2] <- sprintf("%s",New_Fund_An_Tab_Res6HealthCare2)
+
+table.FundAnalysisDMY_HealthCare2[10,1] <- "Dividend Ex-Date"
+table.FundAnalysisDMY_HealthCare2[10,2] <- sprintf("%s",New_Fund_An_Tab_Res13HealthCare2)
+
+
+table.FundAnalysisDMY_HealthCare2[11,1] <- "Earnings Time Stamp"
+table.FundAnalysisDMY_HealthCare2[11,2] <- sprintf("%s",New_Fund_An_Tab_Res7HealthCare2)
+
+table.FundAnalysisDMY_HealthCare2[12,1] <- "Earnings Start Time"
+table.FundAnalysisDMY_HealthCare2[12,2] <- sprintf("%s",New_Fund_An_Tab_Res9HealthCare2)
+
+table.FundAnalysisDMY_HealthCare2[13,1] <- "Earnings End Time"
+table.FundAnalysisDMY_HealthCare2[13,2] <- sprintf("%s",New_Fund_An_Tab_Res11HealthCare2)
+
+table.FundAnalysisDMY_HealthCare2[14,1] <- "Change From 50-day Moving Average"
+table.FundAnalysisDMY_HealthCare2[14,2] <- sprintf("%.2f",New_Fund_An_Tab_Res14HealthCare2)
+
+table.FundAnalysisDMY_HealthCare2[15,1] <- "Change From 200-day Moving Average"
+table.FundAnalysisDMY_HealthCare2[15,2] <- sprintf("%.2f",New_Fund_An_Tab_Res15HealthCare2)
+
+
+tex.table.FundAnalysisDMY_HealthCare2 <- xtable(table.FundAnalysisDMY_HealthCare2)
+caption(tex.table.FundAnalysisDMY_HealthCare2) <- sprintf("Fundamental Analysis parameters for %s", listaHealthCare2[i])
+print(tex.table.FundAnalysisDMY_HealthCare2,
+      include.rownames = FALSE,
+      caption.placement = "top",
+      table.placement = "ht")
+
+
+}
+
+
+
+@
+
+\FloatBarrier
+
+\clearpage
+
+
+\thispagestyle{empty}
+
+\end{document}

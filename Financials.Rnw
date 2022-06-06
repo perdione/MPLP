@@ -1,0 +1,919 @@
+\documentclass[a4paper]{book}
+\usepackage{amssymb}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{bm}
+\usepackage{pstricks}
+\usepackage{qrcode}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{booktabs,tabularx,dcolumn}
+\usepackage{caption}
+\usepackage{xcolor, colortbl}
+\usepackage{changepage}
+\usepackage{fontspec}
+\usepackage{array}
+\usepackage{lastpage}
+\usepackage{color}  
+\usepackage{hyperref}
+\usepackage{cleveref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=black,  %choose some color if you want links to stand out
+}
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{morefloats}
+\usepackage[section]{placeins}
+
+\newcommand{\definesamplelabel}{MPLP Inc.}
+\newcommand{\definesamplename}{Financials}
+\newcommand{\definesampleauthor}{MPA}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\definesamplelabel{}}
+\lhead{\definesamplename{}}
+\rfoot{Page \thepage}
+\cfoot{v. Foundation}
+\lfoot{Analyst: \definesampleauthor}
+
+\maxdeadcycles=200
+
+\begin{document}
+
+<<Create_PDF,include=FALSE, results='hide'>>=
+
+library(knitr)
+opts_chunk$set(concordance=TRUE)
+@
+
+<<setup, include=FALSE, cache=FALSE>>=
+muffleError <- function(x,options) {}
+knit_hooks$set(error=muffleError)
+@
+
+<<Libraries_install,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+install.packages("devtools")
+remotes::install_github("joshuaulrich/quantmod@358-getsymbols-new.session")
+install.packages("xts")
+install.packages("rvest")
+install.packages("tidyverse")
+install.packages("stringr")
+install.packages("forcats")
+install.packages("lubridate")
+install.packages("plotly")
+install.packages("dplyr")
+install.packages("PerformanceAnalytics")
+install.packages("FinancialInstrument")
+install.packages("foreach")
+install.packages("corrplot")
+install.packages("webshot")
+install.packages("data.table")
+@
+
+
+<<Libraries,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+library('knitr')
+library('xtable')
+library('quantmod')
+library('xts')
+library('rvest')
+library('tidyverse')
+library('stringr')
+library('forcats')
+library('lubridate')
+library('plotly')
+library('dplyr')
+library('PerformanceAnalytics')
+library('FinancialInstrument')
+library('foreach')
+library('corrplot')
+library('webshot')
+library('data.table')
+library('tidyverse')
+
+@
+
+
+
+
+\title{\definesamplelabel{}\\ \definesamplename{}}
+
+\author{MPA}
+
+\maketitle
+
+\thispagestyle{empty}
+
+
+\begingroup
+\tableofcontents
+\let\clearpage\relax
+\endgroup
+
+\clearpage
+
+\thispagestyle{empty}
+
+\begingroup
+\listoffigures
+\let\clearpage\relax
+\listoftables
+\endgroup
+
+
+\clearpage
+
+\thispagestyle{empty}
+
+
+
+
+\chapter*{Financials}
+
+\setcounter{chapter}{1}
+
+<<Get Symbols Financials1, echo=FALSE, results='hide',include=FALSE>>=
+
+listaFinancials1 <- c("AFL","AIG","AIZ","AJG","ALL","AMP","AON","AXP","BAC",
+"BEN","BK","BLK","BRK-B","BRO","C","CB","CBOE","CFG","CINF","CMA","CME","COF",
+"DFS","FDS","FITB","FRC","GL","GS","HBAN","HIG","ICE","IVZ","JPM")
+
+getSymbols(listaFinancials1,auto.assign = TRUE, from="2015-11-01",to=Sys.Date()+1)
+
+listaFinancials2 <- c("KEY","L",
+"LNC","MCO","MET","MKTX","MMC","MS","MSCI","MTB","NDAQ","NTRS","PFG","PGR",
+"PNC","PRU","RE","RF","RJF","SBNY","SCHW","SIVB","SPGI","STT","SYF","TFC",
+"TROW","TRV","USB","WFC","WRB","WTW","ZION")
+
+
+getSymbols(listaFinancials2,auto.assign = TRUE, from="2015-11-01",to=Sys.Date()+1)
+
+@
+
+\section{Financials TTR Plots}
+
+
+<<Tutankamon_Financials1 ,fig.keep='all', warning=FALSE,message=FALSE ,echo=FALSE,fig=TRUE, fig.align='center', results='hide', out.width="1.1\\linewidth", fig.cap=listaFinancials1>>=
+
+fun_gen_plts = function(x){
+ 
+  chartSeries(get(x),
+              name = x,
+              TA=' addBBands();
+                   addBBands(draw="p");
+                   addVo();
+                   addMACD();
+                   addADX();
+                   addATR();
+                   addEnvelope();
+                   addCCI();
+                   addCMO();
+                   addDPO();
+                   addRSI();
+                   addSMI();
+                   addWPR();
+                   addCMF();
+                   addKST();
+                   addAroon();
+                   addTDI();
+                   addMFI();
+                   addSAR(accel = c(0.2, 0.2),col=1);
+                   addSMA(n = 20, on = 1, with.col = Cl, overlay = TRUE, col = "green");
+                   addSMA(n = 50, on = 1, with.col = Cl, overlay = TRUE, col = "blue");
+                   addSMA(n = 200, on = 1, with.col = Cl, overlay = TRUE, col = "red");
+                   ',subset='last 3 months', theme = "white"
+              )
+ 
+
+}
+
+i=1
+
+
+for(i in i:length(listaFinancials1)){
+ 
+fun_gen_plts(listaFinancials1[i])
+ 
+i=i+1
+ 
+}
+
+@
+
+
+<<Tutankamon_Financials2 ,fig.keep='all', warning=FALSE,message=FALSE ,echo=FALSE,fig=TRUE, fig.align='center', results='hide', out.width="1.1\\linewidth", fig.cap=listaFinancials2>>=
+
+fun_gen_plts = function(x){
+ 
+  chartSeries(get(x),
+              name = x,
+              TA=' addBBands();
+                   addBBands(draw="p");
+                   addVo();
+                   addMACD();
+                   addADX();
+                   addATR();
+                   addEnvelope();
+                   addCCI();
+                   addCMO();
+                   addDPO();
+                   addRSI();
+                   addSMI();
+                   addWPR();
+                   addCMF();
+                   addKST();
+                   addAroon();
+                   addTDI();
+                   addMFI();
+                   addSAR(accel = c(0.2, 0.2),col=1);
+                   addSMA(n = 20, on = 1, with.col = Cl, overlay = TRUE, col = "green");
+                   addSMA(n = 50, on = 1, with.col = Cl, overlay = TRUE, col = "blue");
+                   addSMA(n = 200, on = 1, with.col = Cl, overlay = TRUE, col = "red");
+                   ',subset='last 3 months', theme = "white"
+              )
+ 
+
+}
+
+i=1
+
+
+for(i in i:length(listaFinancials2)){
+ 
+fun_gen_plts(listaFinancials2[i])
+ 
+i=i+1
+ 
+}
+
+@
+
+<<parameters Financials1, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_sim_Financials1 = function(x){
+ 
+  i=1
+ 
+  testFinancials1 <- as.xts()
+ 
+  finalFinancials1 <- as.xts()
+ 
+  for (i in i:length(listaFinancials1)) {
+   
+    testFinancials1[[i]] <- getSymbols(listaSPFinancials1[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalFinancials1 <- append(finalFinancials1[[i]],testFinancials1[[i]])
+   
+  }
+ 
+  return(finalFinancials1)
+ 
+}
+
+
+fun_gen_tab_Financials1 = function(y){
+ 
+ y <- list()
+ Openy <- list()
+ Closey <- list()
+ Diffy <- list()
+ CltoCly <- list()
+ ClosePrevy <- list()
+ Weeky <- list()
+ Monthy <- list()
+ Yeary <- list()
+ Fivey <- list()
+
+for(i in 1:length(listaFinancials1)){
+ 
+y[[i]] <- getSymbols(listaFinancials1[i],auto.assign = FALSE,from="2015-11-01",to=Sys.Date()+1 ,return.class="xts")
+
+
+y[[i]] <- na.locf(y[[i]], xout=seq(head(index(y[[i]]),1),tail(index(y[[i]]),1),by="1 day"))
+Openy[[i]] <- as.numeric(y[[i]][end(y[[i]]),1])
+Closey[[i]] <- as.numeric(y[[i]][end(y[[i]]),4])
+Diffy[[i]] <- (Closey[[i]]-Openy[[i]])*100/Openy[[i]]
+
+ClosePrevy[[i]] <- as.numeric(y[[i]][end(y[[i]])-1,4])
+
+CltoCly[[i]] <- (Closey[[i]]-ClosePrevy[[i]])*100/ClosePrevy[[i]]
+
+Weeky[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-7,1])) *100 / as.numeric(y[[i]][end(y[[i]])-7,1])
+
+
+Monthy[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-30,4])) *100 / as.numeric(y[[i]][end(y[[i]])-30,4])
+
+
+
+Yeary[[i]] <-(as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]]["2021-01-01",4])) *100 / as.numeric(y[[i]]["2021-01-01",4])
+
+if(length(Yeary[[i]])==0){Yeary[[i]]= NA} else {format(round(Yeary[[i]],digits = 2),nsmall=2)}
+
+
+Fivey[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-1825,4])) *100 / as.numeric(y[[i]][end(y[[i]])-1825,4])
+
+if(length(Fivey[[i]])==0){Fivey[[i]]= NA} else {format(round(Fivey[[i]],digits = 2),nsmall=2)}
+
+
+
+}
+ 
+ResTab <- data.frame()
+ 
+ResTab <- rbind(Diffy,CltoCly,Weeky,Monthy,Yeary,Fivey)
+ 
+
+colnames(ResTab) <- listaFinancials1
+
+
+ResTab_transpose <- as.data.frame(t(as.matrix(ResTab)))
+
+format.data.frame(ResTab_transpose, digits =2)
+
+ 
+return(as.data.frame(ResTab_transpose))
+ 
+}
+
+
+
+fun_gen_sim_Financials1 = function(x){
+ 
+  i=1
+ 
+  testFinancials1 <- as.xts()
+ 
+  finalFinancials1 <- as.xts()
+ 
+  for (i in i:length(listaFinancials1)) {
+   
+    testFinancials1[[i]] <- getSymbols(listaFinancials1[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalFinancials1 <- append(finalFinancials1[[i]],testFinancials1[[i]])
+   
+  }
+ 
+  return(finalFinancials1)
+ 
+}
+
+@
+
+
+<<parameters Financials2, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_sim_Financials2 = function(x){
+ 
+  i=1
+ 
+  testFinancials2 <- as.xts()
+ 
+  finalFinancials2 <- as.xts()
+ 
+  for (i in i:length(listaFinancials2)) {
+   
+    testFinancials2[[i]] <- getSymbols(listaSPFinancials2[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalFinancials2 <- append(finalFinancials2[[i]],testFinancials2[[i]])
+   
+  }
+ 
+  return(finalFinancials2)
+ 
+}
+
+
+fun_gen_tab_Financials2 = function(y){
+ 
+ y <- list()
+ Openy <- list()
+ Closey <- list()
+ Diffy <- list()
+ CltoCly <- list()
+ ClosePrevy <- list()
+ Weeky <- list()
+ Monthy <- list()
+ Yeary <- list()
+ Fivey <- list()
+
+for(i in 1:length(listaFinancials2)){
+ 
+y[[i]] <- getSymbols(listaFinancials2[i],auto.assign = FALSE,from="2015-11-01",to=Sys.Date()+1 ,return.class="xts")
+
+
+y[[i]] <- na.locf(y[[i]], xout=seq(head(index(y[[i]]),1),tail(index(y[[i]]),1),by="1 day"))
+Openy[[i]] <- as.numeric(y[[i]][end(y[[i]]),1])
+Closey[[i]] <- as.numeric(y[[i]][end(y[[i]]),4])
+Diffy[[i]] <- (Closey[[i]]-Openy[[i]])*100/Openy[[i]]
+
+ClosePrevy[[i]] <- as.numeric(y[[i]][end(y[[i]])-1,4])
+
+CltoCly[[i]] <- (Closey[[i]]-ClosePrevy[[i]])*100/ClosePrevy[[i]]
+
+Weeky[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-7,1])) *100 / as.numeric(y[[i]][end(y[[i]])-7,1])
+
+
+Monthy[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-30,4])) *100 / as.numeric(y[[i]][end(y[[i]])-30,4])
+
+
+
+Yeary[[i]] <-(as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]]["2021-01-01",4])) *100 / as.numeric(y[[i]]["2021-01-01",4])
+
+if(length(Yeary[[i]])==0){Yeary[[i]]= NA} else {format(round(Yeary[[i]],digits = 2),nsmall=2)}
+
+
+Fivey[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-1825,4])) *100 / as.numeric(y[[i]][end(y[[i]])-1825,4])
+
+if(length(Fivey[[i]])==0){Fivey[[i]]= NA} else {format(round(Fivey[[i]],digits = 2),nsmall=2)}
+
+
+
+}
+ 
+ResTab <- data.frame()
+ 
+ResTab <- rbind(Diffy,CltoCly,Weeky,Monthy,Yeary,Fivey)
+ 
+
+colnames(ResTab) <- listaFinancials2
+
+
+ResTab_transpose <- as.data.frame(t(as.matrix(ResTab)))
+
+format.data.frame(ResTab_transpose, digits =2)
+
+ 
+return(as.data.frame(ResTab_transpose))
+ 
+}
+
+
+
+fun_gen_sim_Financials2 = function(x){
+ 
+  i=1
+ 
+  testFinancials2 <- as.xts()
+ 
+  finalFinancials2 <- as.xts()
+ 
+  for (i in i:length(listaFinancials2)) {
+   
+    testFinancials2[[i]] <- getSymbols(listaFinancials2[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalFinancials2 <- append(finalFinancials2[[i]],testFinancials2[[i]])
+   
+  }
+ 
+  return(finalFinancials2)
+ 
+}
+
+@
+
+
+
+\subsection{Variation for Financials}
+
+<<Table_Variance_y_Financials1 , echo=FALSE, results = "asis" >>=
+
+table.Financials1 <- fun_gen_tab_Financials1(listaFinancials1)
+ 
+ 
+
+colnames(table.Financials1) <- c("Day","CloseToClose", "Week","Month","Year","5 Years")
+rownames(table.Financials1) <- listaFinancials1
+
+tex.tableFinancials1 <- xtable(table.Financials1)
+caption(tex.tableFinancials1) <- sprintf("Variance for Financials1")
+print(tex.tableFinancials1,
+      sep='\n' )
+
+@
+
+
+<<parameters z1 Financials1, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_fun_Financials1 = function(){
+
+
+FundAnalysis_z  <- c()
+MarketCap    <- c()
+EarningsShare <- c()
+PERatio      <- c()
+BookValue    <- c()
+DividendYield <- c()
+DividendPayDate <- c()
+EarningsTimeStamp <- c()
+PriceEPSEstimate <- c()
+EarningsStartTime <- c()
+EPSForwaerd        <- c()
+EarningsEndTime  <- c()
+PriceBook        <- c()
+ExDividendDate   <- c()
+ChangeMA50       <- c()
+ChangeMA200       <- c()
+
+
+i=1
+
+for (i in i:length(listaFinancials1)){
+ 
+FundAnalysis_z[[i]] <- getQuote(listaFinancials1[i], what = yahooQF(c("Market Capitalization","Earnings/Share","P/E Ratio","Book Value","Dividend Yield","Dividend Pay Date","Earnings Timestamp","Price/EPS Estimate Next Year", "Earnings Start Time","EPS Forward","Earnings End Time","Price/Book","Ex-Dividend Date","Change From 50-day Moving Average","Change From 200-day Moving Average")))
+
+MarketCap[[i]] <- FundAnalysis_z[[i]]$`Market Capitalization`
+EarningsShare[[i]] <- FundAnalysis_z[[i]]$`Earnings/Share`
+PERatio[[i]]       <- FundAnalysis_z[[i]]$`P/E Ratio`
+BookValue[[i]]     <- FundAnalysis_z[[i]]$`Book Value`
+DividendYield[[i]] <- FundAnalysis_z[[i]]$`Dividend Yield`
+DividendPayDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Dividend Pay Date`, origin = "1970-01-01")
+EarningsTimeStamp[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Timestamp`, origin = "1970-01-01")
+PriceEPSEstimate[[i]] <- FundAnalysis_z[[i]]$`Price/EPS Estimate Next Year`
+EarningsStartTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Start Time`, origin = "1970-01-01")
+EPSForwaerd[[i]] <- FundAnalysis_z[[i]]$`EPS Forward`
+EarningsEndTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings End Time`,origin = "1970-01-01")
+PriceBook[[i]] <- FundAnalysis_z[[i]]$`Price/Book`
+ExDividendDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Ex-Dividend Date`, origin = "1970-01-01")
+ChangeMA50[[i]] <- FundAnalysis_z[[i]]$`Change From 50-day MA`
+ChangeMA200[[i]] <- FundAnalysis_z[[i]]$`Change From 200-day MA`}
+
+ResFunAn <- data.frame()
+
+ResFunAn <- rbind(MarketCap,
+                  EarningsShare,
+                  PERatio,
+                  BookValue,
+                  DividendYield,
+                  DividendPayDate,
+                  EarningsTimeStamp,
+                  PriceEPSEstimate,
+                  EarningsStartTime,
+                  EPSForwaerd,
+                  EarningsEndTime,
+                  PriceBook,
+                  ExDividendDate,
+                  ChangeMA50,
+                  ChangeMA200)
+
+return(ResFunAn)
+
+}
+
+<<Table_Variance_y_Financials2 , echo=FALSE, results = "asis" >>=
+
+table.Financials2 <- fun_gen_tab_Financials2(listaFinancials2)
+ 
+ 
+
+colnames(table.Financials2) <- c("Day","CloseToClose", "Week","Month","Year","5 Years")
+rownames(table.Financials2) <- listaFinancials2
+
+tex.tableFinancials2 <- xtable(table.Financials2)
+caption(tex.tableFinancials2) <- sprintf("Variance for Financials2")
+print(tex.tableFinancials2,
+      sep='\n' )
+
+@
+
+
+<<parameters z1 Financials2, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_fun_Financials2 = function(){
+
+
+FundAnalysis_z  <- c()
+MarketCap    <- c()
+EarningsShare <- c()
+PERatio      <- c()
+BookValue    <- c()
+DividendYield <- c()
+DividendPayDate <- c()
+EarningsTimeStamp <- c()
+PriceEPSEstimate <- c()
+EarningsStartTime <- c()
+EPSForwaerd        <- c()
+EarningsEndTime  <- c()
+PriceBook        <- c()
+ExDividendDate   <- c()
+ChangeMA50       <- c()
+ChangeMA200       <- c()
+
+
+i=1
+
+for (i in i:length(listaFinancials2)){
+ 
+FundAnalysis_z[[i]] <- getQuote(listaFinancials2[i], what = yahooQF(c("Market Capitalization","Earnings/Share","P/E Ratio","Book Value","Dividend Yield","Dividend Pay Date","Earnings Timestamp","Price/EPS Estimate Next Year", "Earnings Start Time","EPS Forward","Earnings End Time","Price/Book","Ex-Dividend Date","Change From 50-day Moving Average","Change From 200-day Moving Average")))
+
+MarketCap[[i]] <- FundAnalysis_z[[i]]$`Market Capitalization`
+EarningsShare[[i]] <- FundAnalysis_z[[i]]$`Earnings/Share`
+PERatio[[i]]       <- FundAnalysis_z[[i]]$`P/E Ratio`
+BookValue[[i]]     <- FundAnalysis_z[[i]]$`Book Value`
+DividendYield[[i]] <- FundAnalysis_z[[i]]$`Dividend Yield`
+DividendPayDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Dividend Pay Date`, origin = "1970-01-01")
+EarningsTimeStamp[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Timestamp`, origin = "1970-01-01")
+PriceEPSEstimate[[i]] <- FundAnalysis_z[[i]]$`Price/EPS Estimate Next Year`
+EarningsStartTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Start Time`, origin = "1970-01-01")
+EPSForwaerd[[i]] <- FundAnalysis_z[[i]]$`EPS Forward`
+EarningsEndTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings End Time`,origin = "1970-01-01")
+PriceBook[[i]] <- FundAnalysis_z[[i]]$`Price/Book`
+ExDividendDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Ex-Dividend Date`, origin = "1970-01-01")
+ChangeMA50[[i]] <- FundAnalysis_z[[i]]$`Change From 50-day MA`
+ChangeMA200[[i]] <- FundAnalysis_z[[i]]$`Change From 200-day MA`}
+
+ResFunAn <- data.frame()
+
+ResFunAn <- rbind(MarketCap,
+                  EarningsShare,
+                  PERatio,
+                  BookValue,
+                  DividendYield,
+                  DividendPayDate,
+                  EarningsTimeStamp,
+                  PriceEPSEstimate,
+                  EarningsStartTime,
+                  EPSForwaerd,
+                  EarningsEndTime,
+                  PriceBook,
+                  ExDividendDate,
+                  ChangeMA50,
+                  ChangeMA200)
+
+return(ResFunAn)
+
+}
+
+
+@
+
+
+\newpage
+
+
+\section{Fundamental Analysis Tables Financials}
+
+<<Table_Final_Fundamental_analysis_Financials1 , echo=FALSE, results = "asis" >>=
+
+
+Par_fund_an_Financials1 <- as.data.frame(fun_gen_fun_Financials1())
+
+setnames(Par_fund_an_Financials1, listaFinancials1)
+
+Fund_An_Tab_Res_Financials1 <- as.data.frame(matrix("", ncol = 1, nrow = 15))
+
+
+
+i=1
+
+for (i in i:length(listaFinancials1)) {
+
+
+Fund_An_Tab_Res_Financials1 <- Par_fund_an_Financials1[listaFinancials1[i]]
+
+
+
+New_Fund_An_Tab_Res1Financials1 <- Par_fund_an_Financials1[[1,i]]
+
+New_Fund_An_Tab_Res2Financials1 <- Par_fund_an_Financials1[[2,i]]
+
+New_Fund_An_Tab_Res3Financials1 <-  Par_fund_an_Financials1[[3,i]]
+
+New_Fund_An_Tab_Res4Financials1 <-  Par_fund_an_Financials1[[4,i]]
+
+New_Fund_An_Tab_Res5Financials1 <-  Par_fund_an_Financials1[[5,i]]
+
+New_Fund_An_Tab_Res6Financials1 <- Par_fund_an_Financials1[[6,i]]
+
+New_Fund_An_Tab_Res7Financials1 <- Par_fund_an_Financials1[[7,i]]
+
+New_Fund_An_Tab_Res8Financials1 <- Par_fund_an_Financials1[[8,i]]
+
+New_Fund_An_Tab_Res9Financials1 <- Par_fund_an_Financials1[[9,i]]
+
+New_Fund_An_Tab_Res10Financials1 <-  Par_fund_an_Financials1[[10,i]]
+
+New_Fund_An_Tab_Res11Financials1 <- Par_fund_an_Financials1[[11,i]]
+
+New_Fund_An_Tab_Res12Financials1 <- Par_fund_an_Financials1[[12,i]]
+
+New_Fund_An_Tab_Res13Financials1 <- Par_fund_an_Financials1[[13,i]]
+
+New_Fund_An_Tab_Res14Financials1 <-  Par_fund_an_Financials1[[14,i]]
+
+New_Fund_An_Tab_Res15Financials1 <- Par_fund_an_Financials1[[15,i]]
+
+
+table.FundAnalysisDMY_Financials1 <- matrix("", ncol = 2, nrow = 15)
+
+colnames(table.FundAnalysisDMY_Financials1) <- c("Parameter", "Value")
+
+table.FundAnalysisDMY_Financials1[1,1] <- "Market Capitalization"
+table.FundAnalysisDMY_Financials1[1,2] <- sprintf("%.8g",New_Fund_An_Tab_Res1Financials1)
+
+
+table.FundAnalysisDMY_Financials1[2,1] <- "P/E Ratio"
+table.FundAnalysisDMY_Financials1[2,2] <- sprintf("%.2f",New_Fund_An_Tab_Res3Financials1)
+
+
+table.FundAnalysisDMY_Financials1[3,1] <- "Earnings / Share"
+table.FundAnalysisDMY_Financials1[3,2] <- sprintf("%.2f",New_Fund_An_Tab_Res2Financials1)
+
+
+table.FundAnalysisDMY_Financials1[4,1] <- "Price / Book"
+table.FundAnalysisDMY_Financials1[4,2] <- sprintf("%.2f",New_Fund_An_Tab_Res12Financials1)
+
+
+table.FundAnalysisDMY_Financials1[5,1] <- "Book Value"
+table.FundAnalysisDMY_Financials1[5,2] <- sprintf("%.2f",New_Fund_An_Tab_Res4Financials1)
+
+
+table.FundAnalysisDMY_Financials1[6,1] <- "EPS Forward"
+table.FundAnalysisDMY_Financials1[6,2] <- sprintf("%.2f",New_Fund_An_Tab_Res10Financials1)
+
+
+table.FundAnalysisDMY_Financials1[7,1] <- "Price EPS Estimate Next Year"
+table.FundAnalysisDMY_Financials1[7,2] <- sprintf("%.2f",New_Fund_An_Tab_Res8Financials1)
+
+
+table.FundAnalysisDMY_Financials1[8,1] <- "Dividend Yield"
+table.FundAnalysisDMY_Financials1[8,2] <- sprintf("%.6f",New_Fund_An_Tab_Res5Financials1)
+
+
+table.FundAnalysisDMY_Financials1[9,1] <- "Dividend Pay Date"
+table.FundAnalysisDMY_Financials1[9,2] <- sprintf("%s",New_Fund_An_Tab_Res6Financials1)
+
+table.FundAnalysisDMY_Financials1[10,1] <- "Dividend Ex-Date"
+table.FundAnalysisDMY_Financials1[10,2] <- sprintf("%s",New_Fund_An_Tab_Res13Financials1)
+
+
+table.FundAnalysisDMY_Financials1[11,1] <- "Earnings Time Stamp"
+table.FundAnalysisDMY_Financials1[11,2] <- sprintf("%s",New_Fund_An_Tab_Res7Financials1)
+
+table.FundAnalysisDMY_Financials1[12,1] <- "Earnings Start Time"
+table.FundAnalysisDMY_Financials1[12,2] <- sprintf("%s",New_Fund_An_Tab_Res9Financials1)
+
+table.FundAnalysisDMY_Financials1[13,1] <- "Earnings End Time"
+table.FundAnalysisDMY_Financials1[13,2] <- sprintf("%s",New_Fund_An_Tab_Res11Financials1)
+
+table.FundAnalysisDMY_Financials1[14,1] <- "Change From 50-day Moving Average"
+table.FundAnalysisDMY_Financials1[14,2] <- sprintf("%.2f",New_Fund_An_Tab_Res14Financials1)
+
+table.FundAnalysisDMY_Financials1[15,1] <- "Change From 200-day Moving Average"
+table.FundAnalysisDMY_Financials1[15,2] <- sprintf("%.2f",New_Fund_An_Tab_Res15Financials1)
+
+
+tex.table.FundAnalysisDMY_Financials1 <- xtable(table.FundAnalysisDMY_Financials1)
+caption(tex.table.FundAnalysisDMY_Financials1) <- sprintf("Fundamental Analysis parameters for %s", listaFinancials1[i])
+print(tex.table.FundAnalysisDMY_Financials1,
+      include.rownames = FALSE,
+      caption.placement = "top",
+      table.placement = "ht")
+
+
+}
+
+
+
+@
+
+<<Table_Final_Fundamental_analysis_Financials2 , echo=FALSE, results = "asis" >>=
+
+
+Par_fund_an_Financials2 <- as.data.frame(fun_gen_fun_Financials2())
+
+setnames(Par_fund_an_Financials2, listaFinancials2)
+
+Fund_An_Tab_Res_Financials2 <- as.data.frame(matrix("", ncol = 1, nrow = 15))
+
+
+
+i=1
+
+for (i in i:length(listaFinancials2)) {
+
+
+Fund_An_Tab_Res_Financials2 <- Par_fund_an_Financials2[listaFinancials2[i]]
+
+
+
+New_Fund_An_Tab_Res1Financials2 <- Par_fund_an_Financials2[[1,i]]
+
+New_Fund_An_Tab_Res2Financials2 <- Par_fund_an_Financials2[[2,i]]
+
+New_Fund_An_Tab_Res3Financials2 <-  Par_fund_an_Financials2[[3,i]]
+
+New_Fund_An_Tab_Res4Financials2 <-  Par_fund_an_Financials2[[4,i]]
+
+New_Fund_An_Tab_Res5Financials2 <-  Par_fund_an_Financials2[[5,i]]
+
+New_Fund_An_Tab_Res6Financials2 <- Par_fund_an_Financials2[[6,i]]
+
+New_Fund_An_Tab_Res7Financials2 <- Par_fund_an_Financials2[[7,i]]
+
+New_Fund_An_Tab_Res8Financials2 <- Par_fund_an_Financials2[[8,i]]
+
+New_Fund_An_Tab_Res9Financials2 <- Par_fund_an_Financials2[[9,i]]
+
+New_Fund_An_Tab_Res10Financials2 <-  Par_fund_an_Financials2[[10,i]]
+
+New_Fund_An_Tab_Res11Financials2 <- Par_fund_an_Financials2[[11,i]]
+
+New_Fund_An_Tab_Res12Financials2 <- Par_fund_an_Financials2[[12,i]]
+
+New_Fund_An_Tab_Res13Financials2 <- Par_fund_an_Financials2[[13,i]]
+
+New_Fund_An_Tab_Res14Financials2 <-  Par_fund_an_Financials2[[14,i]]
+
+New_Fund_An_Tab_Res15Financials2 <- Par_fund_an_Financials2[[15,i]]
+
+
+table.FundAnalysisDMY_Financials2 <- matrix("", ncol = 2, nrow = 15)
+
+colnames(table.FundAnalysisDMY_Financials2) <- c("Parameter", "Value")
+
+table.FundAnalysisDMY_Financials2[1,1] <- "Market Capitalization"
+table.FundAnalysisDMY_Financials2[1,2] <- sprintf("%.8g",New_Fund_An_Tab_Res1Financials2)
+
+
+table.FundAnalysisDMY_Financials2[2,1] <- "P/E Ratio"
+table.FundAnalysisDMY_Financials2[2,2] <- sprintf("%.2f",New_Fund_An_Tab_Res3Financials2)
+
+
+table.FundAnalysisDMY_Financials2[3,1] <- "Earnings / Share"
+table.FundAnalysisDMY_Financials2[3,2] <- sprintf("%.2f",New_Fund_An_Tab_Res2Financials2)
+
+
+table.FundAnalysisDMY_Financials2[4,1] <- "Price / Book"
+table.FundAnalysisDMY_Financials2[4,2] <- sprintf("%.2f",New_Fund_An_Tab_Res12Financials2)
+
+
+table.FundAnalysisDMY_Financials2[5,1] <- "Book Value"
+table.FundAnalysisDMY_Financials2[5,2] <- sprintf("%.2f",New_Fund_An_Tab_Res4Financials2)
+
+
+table.FundAnalysisDMY_Financials2[6,1] <- "EPS Forward"
+table.FundAnalysisDMY_Financials2[6,2] <- sprintf("%.2f",New_Fund_An_Tab_Res10Financials2)
+
+
+table.FundAnalysisDMY_Financials2[7,1] <- "Price EPS Estimate Next Year"
+table.FundAnalysisDMY_Financials2[7,2] <- sprintf("%.2f",New_Fund_An_Tab_Res8Financials2)
+
+
+table.FundAnalysisDMY_Financials2[8,1] <- "Dividend Yield"
+table.FundAnalysisDMY_Financials2[8,2] <- sprintf("%.6f",New_Fund_An_Tab_Res5Financials2)
+
+
+table.FundAnalysisDMY_Financials2[9,1] <- "Dividend Pay Date"
+table.FundAnalysisDMY_Financials2[9,2] <- sprintf("%s",New_Fund_An_Tab_Res6Financials2)
+
+table.FundAnalysisDMY_Financials2[10,1] <- "Dividend Ex-Date"
+table.FundAnalysisDMY_Financials2[10,2] <- sprintf("%s",New_Fund_An_Tab_Res13Financials2)
+
+
+table.FundAnalysisDMY_Financials2[11,1] <- "Earnings Time Stamp"
+table.FundAnalysisDMY_Financials2[11,2] <- sprintf("%s",New_Fund_An_Tab_Res7Financials2)
+
+table.FundAnalysisDMY_Financials2[12,1] <- "Earnings Start Time"
+table.FundAnalysisDMY_Financials2[12,2] <- sprintf("%s",New_Fund_An_Tab_Res9Financials2)
+
+table.FundAnalysisDMY_Financials2[13,1] <- "Earnings End Time"
+table.FundAnalysisDMY_Financials2[13,2] <- sprintf("%s",New_Fund_An_Tab_Res11Financials2)
+
+table.FundAnalysisDMY_Financials2[14,1] <- "Change From 50-day Moving Average"
+table.FundAnalysisDMY_Financials2[14,2] <- sprintf("%.2f",New_Fund_An_Tab_Res14Financials2)
+
+table.FundAnalysisDMY_Financials2[15,1] <- "Change From 200-day Moving Average"
+table.FundAnalysisDMY_Financials2[15,2] <- sprintf("%.2f",New_Fund_An_Tab_Res15Financials2)
+
+
+tex.table.FundAnalysisDMY_Financials2 <- xtable(table.FundAnalysisDMY_Financials2)
+caption(tex.table.FundAnalysisDMY_Financials2) <- sprintf("Fundamental Analysis parameters for %s", listaFinancials2[i])
+print(tex.table.FundAnalysisDMY_Financials2,
+      include.rownames = FALSE,
+      caption.placement = "top",
+      table.placement = "ht")
+
+
+}
+
+
+
+@
+
+\FloatBarrier
+
+\clearpage
+
+
+\thispagestyle{empty}
+
+\end{document}

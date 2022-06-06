@@ -1,0 +1,539 @@
+\documentclass[a4paper]{book}
+\usepackage{amssymb}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{bm}
+\usepackage{pstricks}
+\usepackage{qrcode}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{booktabs,tabularx,dcolumn}
+\usepackage{caption}
+\usepackage{xcolor, colortbl}
+\usepackage{changepage}
+\usepackage{fontspec}
+\usepackage{array}
+\usepackage{lastpage}
+\usepackage{color}  
+\usepackage{hyperref}
+\usepackage{cleveref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=black,  %choose some color if you want links to stand out
+}
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{morefloats}
+\usepackage[section]{placeins}
+
+\newcommand{\definesamplelabel}{MPLP Inc.}
+\newcommand{\definesamplename}{Consumer Staples}
+\newcommand{\definesampleauthor}{MPA}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\definesamplelabel{}}
+\lhead{\definesamplename{}}
+\rfoot{Page \thepage}
+\cfoot{v. Foundation}
+\lfoot{Analyst: \definesampleauthor}
+
+\begin{document}
+
+<<Create_PDF,include=FALSE, results='hide'>>=
+
+library(knitr)
+opts_chunk$set(concordance=TRUE)
+@
+
+<<setup, include=FALSE, cache=FALSE>>=
+muffleError <- function(x,options) {}
+knit_hooks$set(error=muffleError)
+@
+
+<<Libraries_install,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+install.packages("devtools")
+remotes::install_github("joshuaulrich/quantmod@358-getsymbols-new.session")
+install.packages("xts")
+install.packages("rvest")
+install.packages("tidyverse")
+install.packages("stringr")
+install.packages("forcats")
+install.packages("lubridate")
+install.packages("plotly")
+install.packages("dplyr")
+install.packages("PerformanceAnalytics")
+install.packages("FinancialInstrument")
+install.packages("foreach")
+install.packages("corrplot")
+install.packages("webshot")
+install.packages("data.table")
+@
+
+
+<<Libraries,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+library('knitr')
+library('xtable')
+library('quantmod')
+library('xts')
+library('rvest')
+library('tidyverse')
+library('stringr')
+library('forcats')
+library('lubridate')
+library('plotly')
+library('dplyr')
+library('PerformanceAnalytics')
+library('FinancialInstrument')
+library('foreach')
+library('corrplot')
+library('webshot')
+library('data.table')
+library('tidyverse')
+
+@
+
+
+
+
+\title{\definesamplelabel{}\\ \definesamplename{}}
+
+\author{MPA}
+
+\maketitle
+
+\thispagestyle{empty}
+
+
+\begingroup
+\tableofcontents
+\let\clearpage\relax
+\endgroup
+
+\clearpage
+
+\thispagestyle{empty}
+
+\begingroup
+\listoffigures
+\let\clearpage\relax
+\listoftables
+\endgroup
+
+
+\clearpage
+
+\thispagestyle{empty}
+
+
+\chapter*{Consumer Staples}
+
+\setcounter{chapter}{1}
+
+<<Get Symbols ConsumerStaples, echo=FALSE, results='hide',include=FALSE>>=
+
+listaConsumerStaples <- c("ADM","BF-B","CAG","CHD","CL","CLX","COST","CPB","EL","GIS",
+"HRL","HSY","K","KHC","KMB","KO","KR","LW","MDLZ","MKC","MNST","MO","PEP","PG",
+"PM","SJM","STZ","SYY","TAP","TSN","WBA","WMT")
+
+getSymbols(listaConsumerStaples,auto.assign = TRUE, from="2015-11-01",to=Sys.Date()+1)
+
+@
+
+\section{Consumer Staples TTR Plots}
+
+
+<<Tutankamon_ConsumerStaples ,fig.keep='all', warning=FALSE,message=FALSE ,echo=FALSE,fig=TRUE, fig.align='center', results='hide', out.width="1.1\\linewidth", fig.cap=listaConsumerStaples>>=
+
+fun_gen_plts = function(x){
+ 
+  chartSeries(get(x),
+              name = x,
+              TA=' addBBands();
+                   addBBands(draw="p");
+                   addVo();
+                   addMACD();
+                   addADX();
+                   addATR();
+                   addEnvelope();
+                   addCCI();
+                   addCMO();
+                   addDPO();
+                   addRSI();
+                   addSMI();
+                   addWPR();
+                   addCMF();
+                   addKST();
+                   addAroon();
+                   addTDI();
+                   addMFI();
+                   addSAR(accel = c(0.2, 0.2),col=1);
+                   addSMA(n = 20, on = 1, with.col = Cl, overlay = TRUE, col = "green");
+                   addSMA(n = 50, on = 1, with.col = Cl, overlay = TRUE, col = "blue");
+                   addSMA(n = 200, on = 1, with.col = Cl, overlay = TRUE, col = "red");
+                   ',subset='last 3 months', theme = "white"
+              )
+ 
+
+}
+
+i=1
+
+
+for(i in i:length(listaConsumerStaples)){
+ 
+fun_gen_plts(listaConsumerStaples[i])
+ 
+i=i+1
+ 
+}
+
+@
+
+<<parameters ConsumerStaples, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_sim_ConsumerStaples = function(x){
+ 
+  i=1
+ 
+  testConsumerStaples <- as.xts()
+ 
+  finalConsumerStaples <- as.xts()
+ 
+  for (i in i:length(listaConsumerStaples)) {
+   
+    testConsumerStaples[[i]] <- getSymbols(listaSPConsumerStaples[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalConsumerStaples <- append(finalConsumerStaples[[i]],testConsumerStaples[[i]])
+   
+  }
+ 
+  return(finalConsumerStaples)
+ 
+}
+
+
+fun_gen_tab_ConsumerStaples = function(y){
+ 
+ y <- list()
+ Openy <- list()
+ Closey <- list()
+ Diffy <- list()
+ CltoCly <- list()
+ ClosePrevy <- list()
+ Weeky <- list()
+ Monthy <- list()
+ Yeary <- list()
+ Fivey <- list()
+
+for(i in 1:length(listaConsumerStaples)){
+ 
+y[[i]] <- getSymbols(listaConsumerStaples[i],auto.assign = FALSE,from="2015-11-01",to=Sys.Date()+1 ,return.class="xts")
+
+
+y[[i]] <- na.locf(y[[i]], xout=seq(head(index(y[[i]]),1),tail(index(y[[i]]),1),by="1 day"))
+Openy[[i]] <- as.numeric(y[[i]][end(y[[i]]),1])
+Closey[[i]] <- as.numeric(y[[i]][end(y[[i]]),4])
+Diffy[[i]] <- (Closey[[i]]-Openy[[i]])*100/Openy[[i]]
+
+ClosePrevy[[i]] <- as.numeric(y[[i]][end(y[[i]])-1,4])
+
+CltoCly[[i]] <- (Closey[[i]]-ClosePrevy[[i]])*100/ClosePrevy[[i]]
+
+Weeky[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-7,1])) *100 / as.numeric(y[[i]][end(y[[i]])-7,1])
+
+
+Monthy[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-30,4])) *100 / as.numeric(y[[i]][end(y[[i]])-30,4])
+
+
+
+Yeary[[i]] <-(as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]]["2021-01-01",4])) *100 / as.numeric(y[[i]]["2021-01-01",4])
+
+if(length(Yeary[[i]])==0){Yeary[[i]]= NA} else {format(round(Yeary[[i]],digits = 2),nsmall=2)}
+
+
+Fivey[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-1825,4])) *100 / as.numeric(y[[i]][end(y[[i]])-1825,4])
+
+if(length(Fivey[[i]])==0){Fivey[[i]]= NA} else {format(round(Fivey[[i]],digits = 2),nsmall=2)}
+
+
+
+}
+ 
+ResTab <- data.frame()
+ 
+ResTab <- rbind(Diffy,CltoCly,Weeky,Monthy,Yeary,Fivey)
+ 
+
+colnames(ResTab) <- listaConsumerStaples
+
+
+ResTab_transpose <- as.data.frame(t(as.matrix(ResTab)))
+
+format.data.frame(ResTab_transpose, digits =2)
+
+ 
+return(as.data.frame(ResTab_transpose))
+ 
+}
+
+
+
+fun_gen_sim_ConsumerStaples = function(x){
+ 
+  i=1
+ 
+  testConsumerStaples <- as.xts()
+ 
+  finalConsumerStaples <- as.xts()
+ 
+  for (i in i:length(listaConsumerStaples)) {
+   
+    testConsumerStaples[[i]] <- getSymbols(listaConsumerStaples[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalConsumerStaples <- append(finalConsumerStaples[[i]],testConsumerStaples[[i]])
+   
+  }
+ 
+  return(finalConsumerStaples)
+ 
+}
+
+@
+
+
+\subsection{Variation for ConsumerStaples}
+
+<<Table_Variance_y_ConsumerStaples , echo=FALSE, results = "asis" >>=
+
+table.ConsumerStaples <- fun_gen_tab_ConsumerStaples(listaConsumerStaples)
+ 
+ 
+
+colnames(table.ConsumerStaples) <- c("Day","CloseToClose", "Week","Month","Year","5 Years")
+rownames(table.ConsumerStaples) <- listaConsumerStaples
+
+tex.tableConsumerStaples <- xtable(table.ConsumerStaples)
+caption(tex.tableConsumerStaples) <- sprintf("Variance for ConsumerStaples")
+print(tex.tableConsumerStaples,
+      sep='\n' )
+
+@
+
+
+<<parameters z1 ConsumerStaples, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_fun_ConsumerStaples = function(){
+
+
+FundAnalysis_z  <- c()
+MarketCap    <- c()
+EarningsShare <- c()
+PERatio      <- c()
+BookValue    <- c()
+DividendYield <- c()
+DividendPayDate <- c()
+EarningsTimeStamp <- c()
+PriceEPSEstimate <- c()
+EarningsStartTime <- c()
+EPSForwaerd        <- c()
+EarningsEndTime  <- c()
+PriceBook        <- c()
+ExDividendDate   <- c()
+ChangeMA50       <- c()
+ChangeMA200       <- c()
+
+
+i=1
+
+for (i in i:length(listaConsumerStaples)){
+ 
+FundAnalysis_z[[i]] <- getQuote(listaConsumerStaples[i], what = yahooQF(c("Market Capitalization","Earnings/Share","P/E Ratio","Book Value","Dividend Yield","Dividend Pay Date","Earnings Timestamp","Price/EPS Estimate Next Year", "Earnings Start Time","EPS Forward","Earnings End Time","Price/Book","Ex-Dividend Date","Change From 50-day Moving Average","Change From 200-day Moving Average")))
+
+MarketCap[[i]] <- FundAnalysis_z[[i]]$`Market Capitalization`
+EarningsShare[[i]] <- FundAnalysis_z[[i]]$`Earnings/Share`
+PERatio[[i]]       <- FundAnalysis_z[[i]]$`P/E Ratio`
+BookValue[[i]]     <- FundAnalysis_z[[i]]$`Book Value`
+DividendYield[[i]] <- FundAnalysis_z[[i]]$`Dividend Yield`
+DividendPayDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Dividend Pay Date`, origin = "1970-01-01")
+EarningsTimeStamp[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Timestamp`, origin = "1970-01-01")
+PriceEPSEstimate[[i]] <- FundAnalysis_z[[i]]$`Price/EPS Estimate Next Year`
+EarningsStartTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Start Time`, origin = "1970-01-01")
+EPSForwaerd[[i]] <- FundAnalysis_z[[i]]$`EPS Forward`
+EarningsEndTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings End Time`,origin = "1970-01-01")
+PriceBook[[i]] <- FundAnalysis_z[[i]]$`Price/Book`
+ExDividendDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Ex-Dividend Date`, origin = "1970-01-01")
+ChangeMA50[[i]] <- FundAnalysis_z[[i]]$`Change From 50-day MA`
+ChangeMA200[[i]] <- FundAnalysis_z[[i]]$`Change From 200-day MA`}
+
+ResFunAn <- data.frame()
+
+ResFunAn <- rbind(MarketCap,
+                  EarningsShare,
+                  PERatio,
+                  BookValue,
+                  DividendYield,
+                  DividendPayDate,
+                  EarningsTimeStamp,
+                  PriceEPSEstimate,
+                  EarningsStartTime,
+                  EPSForwaerd,
+                  EarningsEndTime,
+                  PriceBook,
+                  ExDividendDate,
+                  ChangeMA50,
+                  ChangeMA200)
+
+return(ResFunAn)
+
+}
+
+
+@
+
+
+\newpage
+
+
+\section{Fundamental Analysis Tables Consumer Staples}
+
+<<Table_Final_Fundamental_analysis_ConsumerStaples , echo=FALSE, results = "asis" >>=
+
+
+Par_fund_an_ConsumerStaples <- as.data.frame(fun_gen_fun_ConsumerStaples())
+
+setnames(Par_fund_an_ConsumerStaples, listaConsumerStaples)
+
+Fund_An_Tab_Res_ConsumerStaples <- as.data.frame(matrix("", ncol = 1, nrow = 15))
+
+
+
+i=1
+
+for (i in i:length(listaConsumerStaples)) {
+
+
+Fund_An_Tab_Res_ConsumerStaples <- Par_fund_an_ConsumerStaples[listaConsumerStaples[i]]
+
+
+
+New_Fund_An_Tab_Res1ConsumerStaples <- Par_fund_an_ConsumerStaples[[1,i]]
+
+New_Fund_An_Tab_Res2ConsumerStaples <- Par_fund_an_ConsumerStaples[[2,i]]
+
+New_Fund_An_Tab_Res3ConsumerStaples <-  Par_fund_an_ConsumerStaples[[3,i]]
+
+New_Fund_An_Tab_Res4ConsumerStaples <-  Par_fund_an_ConsumerStaples[[4,i]]
+
+New_Fund_An_Tab_Res5ConsumerStaples <-  Par_fund_an_ConsumerStaples[[5,i]]
+
+New_Fund_An_Tab_Res6ConsumerStaples <- Par_fund_an_ConsumerStaples[[6,i]]
+
+New_Fund_An_Tab_Res7ConsumerStaples <- Par_fund_an_ConsumerStaples[[7,i]]
+
+New_Fund_An_Tab_Res8ConsumerStaples <- Par_fund_an_ConsumerStaples[[8,i]]
+
+New_Fund_An_Tab_Res9ConsumerStaples <- Par_fund_an_ConsumerStaples[[9,i]]
+
+New_Fund_An_Tab_Res10ConsumerStaples <-  Par_fund_an_ConsumerStaples[[10,i]]
+
+New_Fund_An_Tab_Res11ConsumerStaples <- Par_fund_an_ConsumerStaples[[11,i]]
+
+New_Fund_An_Tab_Res12ConsumerStaples <- Par_fund_an_ConsumerStaples[[12,i]]
+
+New_Fund_An_Tab_Res13ConsumerStaples <- Par_fund_an_ConsumerStaples[[13,i]]
+
+New_Fund_An_Tab_Res14ConsumerStaples <-  Par_fund_an_ConsumerStaples[[14,i]]
+
+New_Fund_An_Tab_Res15ConsumerStaples <- Par_fund_an_ConsumerStaples[[15,i]]
+
+
+table.FundAnalysisDMY_ConsumerStaples <- matrix("", ncol = 2, nrow = 15)
+
+colnames(table.FundAnalysisDMY_ConsumerStaples) <- c("Parameter", "Value")
+
+table.FundAnalysisDMY_ConsumerStaples[1,1] <- "Market Capitalization"
+table.FundAnalysisDMY_ConsumerStaples[1,2] <- sprintf("%.8g",New_Fund_An_Tab_Res1ConsumerStaples)
+
+
+table.FundAnalysisDMY_ConsumerStaples[2,1] <- "P/E Ratio"
+table.FundAnalysisDMY_ConsumerStaples[2,2] <- sprintf("%.2f",New_Fund_An_Tab_Res3ConsumerStaples)
+
+
+table.FundAnalysisDMY_ConsumerStaples[3,1] <- "Earnings / Share"
+table.FundAnalysisDMY_ConsumerStaples[3,2] <- sprintf("%.2f",New_Fund_An_Tab_Res2ConsumerStaples)
+
+
+table.FundAnalysisDMY_ConsumerStaples[4,1] <- "Price / Book"
+table.FundAnalysisDMY_ConsumerStaples[4,2] <- sprintf("%.2f",New_Fund_An_Tab_Res12ConsumerStaples)
+
+
+table.FundAnalysisDMY_ConsumerStaples[5,1] <- "Book Value"
+table.FundAnalysisDMY_ConsumerStaples[5,2] <- sprintf("%.2f",New_Fund_An_Tab_Res4ConsumerStaples)
+
+
+table.FundAnalysisDMY_ConsumerStaples[6,1] <- "EPS Forward"
+table.FundAnalysisDMY_ConsumerStaples[6,2] <- sprintf("%.2f",New_Fund_An_Tab_Res10ConsumerStaples)
+
+
+table.FundAnalysisDMY_ConsumerStaples[7,1] <- "Price EPS Estimate Next Year"
+table.FundAnalysisDMY_ConsumerStaples[7,2] <- sprintf("%.2f",New_Fund_An_Tab_Res8ConsumerStaples)
+
+
+table.FundAnalysisDMY_ConsumerStaples[8,1] <- "Dividend Yield"
+table.FundAnalysisDMY_ConsumerStaples[8,2] <- sprintf("%.6f",New_Fund_An_Tab_Res5ConsumerStaples)
+
+
+table.FundAnalysisDMY_ConsumerStaples[9,1] <- "Dividend Pay Date"
+table.FundAnalysisDMY_ConsumerStaples[9,2] <- sprintf("%s",New_Fund_An_Tab_Res6ConsumerStaples)
+
+table.FundAnalysisDMY_ConsumerStaples[10,1] <- "Dividend Ex-Date"
+table.FundAnalysisDMY_ConsumerStaples[10,2] <- sprintf("%s",New_Fund_An_Tab_Res13ConsumerStaples)
+
+
+table.FundAnalysisDMY_ConsumerStaples[11,1] <- "Earnings Time Stamp"
+table.FundAnalysisDMY_ConsumerStaples[11,2] <- sprintf("%s",New_Fund_An_Tab_Res7ConsumerStaples)
+
+table.FundAnalysisDMY_ConsumerStaples[12,1] <- "Earnings Start Time"
+table.FundAnalysisDMY_ConsumerStaples[12,2] <- sprintf("%s",New_Fund_An_Tab_Res9ConsumerStaples)
+
+table.FundAnalysisDMY_ConsumerStaples[13,1] <- "Earnings End Time"
+table.FundAnalysisDMY_ConsumerStaples[13,2] <- sprintf("%s",New_Fund_An_Tab_Res11ConsumerStaples)
+
+table.FundAnalysisDMY_ConsumerStaples[14,1] <- "Change From 50-day Moving Average"
+table.FundAnalysisDMY_ConsumerStaples[14,2] <- sprintf("%.2f",New_Fund_An_Tab_Res14ConsumerStaples)
+
+table.FundAnalysisDMY_ConsumerStaples[15,1] <- "Change From 200-day Moving Average"
+table.FundAnalysisDMY_ConsumerStaples[15,2] <- sprintf("%.2f",New_Fund_An_Tab_Res15ConsumerStaples)
+
+
+tex.table.FundAnalysisDMY_ConsumerStaples <- xtable(table.FundAnalysisDMY_ConsumerStaples)
+caption(tex.table.FundAnalysisDMY_ConsumerStaples) <- sprintf("Fundamental Analysis parameters for %s", listaConsumerStaples[i])
+print(tex.table.FundAnalysisDMY_ConsumerStaples,
+      include.rownames = FALSE,
+      caption.placement = "top",
+      table.placement = "ht")
+
+
+}
+
+
+
+@
+
+\FloatBarrier
+
+\clearpage
+
+
+\thispagestyle{empty}
+
+\end{document}
+
+
+

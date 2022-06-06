@@ -1,0 +1,545 @@
+\documentclass[a4paper]{book}
+\usepackage{amssymb}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{bm}
+\usepackage{pstricks}
+\usepackage{qrcode}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{booktabs,tabularx,dcolumn}
+\usepackage{caption}
+\usepackage{xcolor, colortbl}
+\usepackage{changepage}
+\usepackage{fontspec}
+\usepackage{array}
+\usepackage{lastpage}
+\usepackage{color}  
+\usepackage{hyperref}
+\usepackage{cleveref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=black,  %choose some color if you want links to stand out
+}
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{morefloats}
+\usepackage[section]{placeins}
+
+\newcommand{\definesamplelabel}{MPLP Inc.}
+\newcommand{\definesamplename}{Real Estate}
+\newcommand{\definesampleauthor}{MPA}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\definesamplelabel{}}
+\lhead{\definesamplename{}}
+\rfoot{Page \thepage}
+\cfoot{v. Foundation}
+\lfoot{Analyst: \definesampleauthor}
+
+\begin{document}
+
+<<Create_PDF,include=FALSE, results='hide'>>=
+
+library(knitr)
+opts_chunk$set(concordance=TRUE)
+@
+
+<<setup, include=FALSE, cache=FALSE>>=
+muffleError <- function(x,options) {}
+knit_hooks$set(error=muffleError)
+@
+
+<<Libraries_install,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+install.packages("devtools")
+remotes::install_github("joshuaulrich/quantmod@358-getsymbols-new.session")
+install.packages("xts")
+install.packages("rvest")
+install.packages("tidyverse")
+install.packages("stringr")
+install.packages("forcats")
+install.packages("lubridate")
+install.packages("plotly")
+install.packages("dplyr")
+install.packages("PerformanceAnalytics")
+install.packages("FinancialInstrument")
+install.packages("foreach")
+install.packages("corrplot")
+install.packages("webshot")
+install.packages("data.table")
+@
+
+
+<<Libraries,warning=FALSE,echo=FALSE, results='hide',include=FALSE>>=
+library('knitr')
+library('xtable')
+library('quantmod')
+library('xts')
+library('rvest')
+library('tidyverse')
+library('stringr')
+library('forcats')
+library('lubridate')
+library('plotly')
+library('dplyr')
+library('PerformanceAnalytics')
+library('FinancialInstrument')
+library('foreach')
+library('corrplot')
+library('webshot')
+library('data.table')
+library('tidyverse')
+
+@
+
+
+
+
+\title{\definesamplelabel{}\\ \definesamplename{}}
+
+\author{MPA}
+
+\maketitle
+
+\thispagestyle{empty}
+
+
+\begingroup
+\tableofcontents
+\let\clearpage\relax
+\endgroup
+
+\clearpage
+
+\thispagestyle{empty}
+
+\begingroup
+\listoffigures
+\let\clearpage\relax
+\listoftables
+\endgroup
+
+
+\clearpage
+
+\thispagestyle{empty}
+
+
+
+
+
+
+
+\chapter*{Real Estate}
+
+\setcounter{chapter}{1}
+
+<<Get Symbols RealEstate, echo=FALSE, results='hide',include=FALSE>>=
+
+listaRealEstate <- c("AMT","ARE","AVB","BXP","CBRE","CCI",
+"CPT","DLR","DRE","EQIX","EQR","ESS","EXR","FRT","HST","IRM","KIM","MAA",
+"O","PEAK","PLD","PSA","REG","SBAC","SPG","UDR","VNO","VTR",
+"WELL","WY")
+
+getSymbols(listaRealEstate,auto.assign = TRUE, from="2015-11-01",to=Sys.Date()+1)
+
+@
+
+\section{Real Estate TTR Plots}
+
+
+<<Tutankamon_RealEstate ,fig.keep='all', warning=FALSE,message=FALSE ,echo=FALSE,fig=TRUE, fig.align='center', results='hide', out.width="1.1\\linewidth", fig.cap=listaRealEstate>>=
+
+fun_gen_plts = function(x){
+ 
+  chartSeries(get(x),
+              name = x,
+              TA=' addBBands();
+                   addBBands(draw="p");
+                   addVo();
+                   addMACD();
+                   addADX();
+                   addATR();
+                   addEnvelope();
+                   addCCI();
+                   addCMO();
+                   addDPO();
+                   addRSI();
+                   addSMI();
+                   addWPR();
+                   addCMF();
+                   addKST();
+                   addAroon();
+                   addTDI();
+                   addMFI();
+                   addSAR(accel = c(0.2, 0.2),col=1);
+                   addSMA(n = 20, on = 1, with.col = Cl, overlay = TRUE, col = "green");
+                   addSMA(n = 50, on = 1, with.col = Cl, overlay = TRUE, col = "blue");
+                   addSMA(n = 200, on = 1, with.col = Cl, overlay = TRUE, col = "red");
+                   ',subset='last 3 months', theme = "white"
+              )
+ 
+
+}
+
+i=1
+
+
+for(i in i:length(listaRealEstate)){
+ 
+fun_gen_plts(listaRealEstate[i])
+ 
+i=i+1
+ 
+}
+
+@
+
+<<parameters RealEstate, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_sim_RealEstate = function(x){
+ 
+  i=1
+ 
+  testRealEstate <- as.xts()
+ 
+  finalRealEstate <- as.xts()
+ 
+  for (i in i:length(listaRealEstate)) {
+   
+    testRealEstate[[i]] <- getSymbols(listaSPRealEstate[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalRealEstate <- append(finalRealEstate[[i]],testRealEstate[[i]])
+   
+  }
+ 
+  return(finalRealEstate)
+ 
+}
+
+
+fun_gen_tab_RealEstate = function(y){
+ 
+ y <- list()
+ Openy <- list()
+ Closey <- list()
+ Diffy <- list()
+ CltoCly <- list()
+ ClosePrevy <- list()
+ Weeky <- list()
+ Monthy <- list()
+ Yeary <- list()
+ Fivey <- list()
+
+for(i in 1:length(listaRealEstate)){
+ 
+y[[i]] <- getSymbols(listaRealEstate[i],auto.assign = FALSE,from="2015-11-01",to=Sys.Date()+1 ,return.class="xts")
+
+
+y[[i]] <- na.locf(y[[i]], xout=seq(head(index(y[[i]]),1),tail(index(y[[i]]),1),by="1 day"))
+Openy[[i]] <- as.numeric(y[[i]][end(y[[i]]),1])
+Closey[[i]] <- as.numeric(y[[i]][end(y[[i]]),4])
+Diffy[[i]] <- (Closey[[i]]-Openy[[i]])*100/Openy[[i]]
+
+ClosePrevy[[i]] <- as.numeric(y[[i]][end(y[[i]])-1,4])
+
+CltoCly[[i]] <- (Closey[[i]]-ClosePrevy[[i]])*100/ClosePrevy[[i]]
+
+Weeky[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-7,1])) *100 / as.numeric(y[[i]][end(y[[i]])-7,1])
+
+
+Monthy[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-30,4])) *100 / as.numeric(y[[i]][end(y[[i]])-30,4])
+
+
+
+Yeary[[i]] <-(as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]]["2021-01-01",4])) *100 / as.numeric(y[[i]]["2021-01-01",4])
+
+if(length(Yeary[[i]])==0){Yeary[[i]]= NA} else {format(round(Yeary[[i]],digits = 2),nsmall=2)}
+
+
+Fivey[[i]] <- (as.numeric(y[[i]][end(y[[i]]),4])-as.numeric(y[[i]][end(y[[i]])-1825,4])) *100 / as.numeric(y[[i]][end(y[[i]])-1825,4])
+
+if(length(Fivey[[i]])==0){Fivey[[i]]= NA} else {format(round(Fivey[[i]],digits = 2),nsmall=2)}
+
+
+
+}
+ 
+ResTab <- data.frame()
+ 
+ResTab <- rbind(Diffy,CltoCly,Weeky,Monthy,Yeary,Fivey)
+ 
+
+colnames(ResTab) <- listaRealEstate
+
+
+ResTab_transpose <- as.data.frame(t(as.matrix(ResTab)))
+
+format.data.frame(ResTab_transpose, digits =2)
+
+ 
+return(as.data.frame(ResTab_transpose))
+ 
+}
+
+
+
+fun_gen_sim_RealEstate = function(x){
+ 
+  i=1
+ 
+  testRealEstate <- as.xts()
+ 
+  finalRealEstate <- as.xts()
+ 
+  for (i in i:length(listaRealEstate)) {
+   
+    testRealEstate[[i]] <- getSymbols(listaRealEstate[i],auto.assign = FALSE, from="2015-11-01",to=Sys.Date()+1,return.class="xts")
+   
+  finalRealEstate <- append(finalRealEstate[[i]],testRealEstate[[i]])
+   
+  }
+ 
+  return(finalRealEstate)
+ 
+}
+
+@
+
+
+\subsection{Variation for Real Estate}
+
+<<Table_Variance_y_RealEstate , echo=FALSE, results = "asis" >>=
+
+table.RealEstate <- fun_gen_tab_RealEstate(listaRealEstate)
+ 
+ 
+
+colnames(table.RealEstate) <- c("Day","CloseToClose", "Week","Month","Year","5 Years")
+rownames(table.RealEstate) <- listaRealEstate
+
+tex.tableRealEstate <- xtable(table.RealEstate)
+caption(tex.tableRealEstate) <- sprintf("Variance for RealEstate")
+print(tex.tableRealEstate,
+      sep='\n' )
+
+@
+
+
+<<parameters z1 RealEstate, echo=FALSE, results='hide',include=FALSE>>=
+
+
+fun_gen_fun_RealEstate = function(){
+
+
+FundAnalysis_z  <- c()
+MarketCap    <- c()
+EarningsShare <- c()
+PERatio      <- c()
+BookValue    <- c()
+DividendYield <- c()
+DividendPayDate <- c()
+EarningsTimeStamp <- c()
+PriceEPSEstimate <- c()
+EarningsStartTime <- c()
+EPSForwaerd        <- c()
+EarningsEndTime  <- c()
+PriceBook        <- c()
+ExDividendDate   <- c()
+ChangeMA50       <- c()
+ChangeMA200       <- c()
+
+
+i=1
+
+for (i in i:length(listaRealEstate)){
+ 
+FundAnalysis_z[[i]] <- getQuote(listaRealEstate[i], what = yahooQF(c("Market Capitalization","Earnings/Share","P/E Ratio","Book Value","Dividend Yield","Dividend Pay Date","Earnings Timestamp","Price/EPS Estimate Next Year", "Earnings Start Time","EPS Forward","Earnings End Time","Price/Book","Ex-Dividend Date","Change From 50-day Moving Average","Change From 200-day Moving Average")))
+
+MarketCap[[i]] <- FundAnalysis_z[[i]]$`Market Capitalization`
+EarningsShare[[i]] <- FundAnalysis_z[[i]]$`Earnings/Share`
+PERatio[[i]]       <- FundAnalysis_z[[i]]$`P/E Ratio`
+BookValue[[i]]     <- FundAnalysis_z[[i]]$`Book Value`
+DividendYield[[i]] <- FundAnalysis_z[[i]]$`Dividend Yield`
+DividendPayDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Dividend Pay Date`, origin = "1970-01-01")
+EarningsTimeStamp[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Timestamp`, origin = "1970-01-01")
+PriceEPSEstimate[[i]] <- FundAnalysis_z[[i]]$`Price/EPS Estimate Next Year`
+EarningsStartTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings Start Time`, origin = "1970-01-01")
+EPSForwaerd[[i]] <- FundAnalysis_z[[i]]$`EPS Forward`
+EarningsEndTime[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Earnings End Time`,origin = "1970-01-01")
+PriceBook[[i]] <- FundAnalysis_z[[i]]$`Price/Book`
+ExDividendDate[[i]] <- as.POSIXct(FundAnalysis_z[[i]]$`Ex-Dividend Date`, origin = "1970-01-01")
+ChangeMA50[[i]] <- FundAnalysis_z[[i]]$`Change From 50-day MA`
+ChangeMA200[[i]] <- FundAnalysis_z[[i]]$`Change From 200-day MA`}
+
+ResFunAn <- data.frame()
+
+ResFunAn <- rbind(MarketCap,
+                  EarningsShare,
+                  PERatio,
+                  BookValue,
+                  DividendYield,
+                  DividendPayDate,
+                  EarningsTimeStamp,
+                  PriceEPSEstimate,
+                  EarningsStartTime,
+                  EPSForwaerd,
+                  EarningsEndTime,
+                  PriceBook,
+                  ExDividendDate,
+                  ChangeMA50,
+                  ChangeMA200)
+
+return(ResFunAn)
+
+}
+
+
+@
+
+
+\newpage
+
+
+\section{Fundamental Analysis Tables Real Estate}
+
+<<Table_Final_Fundamental_analysis_RealEstate , echo=FALSE, results = "asis" >>=
+
+
+Par_fund_an_RealEstate <- as.data.frame(fun_gen_fun_RealEstate())
+
+setnames(Par_fund_an_RealEstate, listaRealEstate)
+
+Fund_An_Tab_Res_RealEstate <- as.data.frame(matrix("", ncol = 1, nrow = 15))
+
+
+
+i=1
+
+for (i in i:length(listaRealEstate)) {
+
+
+Fund_An_Tab_Res_RealEstate <- Par_fund_an_RealEstate[listaRealEstate[i]]
+
+
+
+New_Fund_An_Tab_Res1RealEstate <- Par_fund_an_RealEstate[[1,i]]
+
+New_Fund_An_Tab_Res2RealEstate <- Par_fund_an_RealEstate[[2,i]]
+
+New_Fund_An_Tab_Res3RealEstate <-  Par_fund_an_RealEstate[[3,i]]
+
+New_Fund_An_Tab_Res4RealEstate <-  Par_fund_an_RealEstate[[4,i]]
+
+New_Fund_An_Tab_Res5RealEstate <-  Par_fund_an_RealEstate[[5,i]]
+
+New_Fund_An_Tab_Res6RealEstate <- Par_fund_an_RealEstate[[6,i]]
+
+New_Fund_An_Tab_Res7RealEstate <- Par_fund_an_RealEstate[[7,i]]
+
+New_Fund_An_Tab_Res8RealEstate <- Par_fund_an_RealEstate[[8,i]]
+
+New_Fund_An_Tab_Res9RealEstate <- Par_fund_an_RealEstate[[9,i]]
+
+New_Fund_An_Tab_Res10RealEstate <-  Par_fund_an_RealEstate[[10,i]]
+
+New_Fund_An_Tab_Res11RealEstate <- Par_fund_an_RealEstate[[11,i]]
+
+New_Fund_An_Tab_Res12RealEstate <- Par_fund_an_RealEstate[[12,i]]
+
+New_Fund_An_Tab_Res13RealEstate <- Par_fund_an_RealEstate[[13,i]]
+
+New_Fund_An_Tab_Res14RealEstate <-  Par_fund_an_RealEstate[[14,i]]
+
+New_Fund_An_Tab_Res15RealEstate <- Par_fund_an_RealEstate[[15,i]]
+
+
+table.FundAnalysisDMY_RealEstate <- matrix("", ncol = 2, nrow = 15)
+
+colnames(table.FundAnalysisDMY_RealEstate) <- c("Parameter", "Value")
+
+table.FundAnalysisDMY_RealEstate[1,1] <- "Market Capitalization"
+table.FundAnalysisDMY_RealEstate[1,2] <- sprintf("%.8g",New_Fund_An_Tab_Res1RealEstate)
+
+
+table.FundAnalysisDMY_RealEstate[2,1] <- "P/E Ratio"
+table.FundAnalysisDMY_RealEstate[2,2] <- sprintf("%.2f",New_Fund_An_Tab_Res3RealEstate)
+
+
+table.FundAnalysisDMY_RealEstate[3,1] <- "Earnings / Share"
+table.FundAnalysisDMY_RealEstate[3,2] <- sprintf("%.2f",New_Fund_An_Tab_Res2RealEstate)
+
+
+table.FundAnalysisDMY_RealEstate[4,1] <- "Price / Book"
+table.FundAnalysisDMY_RealEstate[4,2] <- sprintf("%.2f",New_Fund_An_Tab_Res12RealEstate)
+
+
+table.FundAnalysisDMY_RealEstate[5,1] <- "Book Value"
+table.FundAnalysisDMY_RealEstate[5,2] <- sprintf("%.2f",New_Fund_An_Tab_Res4RealEstate)
+
+
+table.FundAnalysisDMY_RealEstate[6,1] <- "EPS Forward"
+table.FundAnalysisDMY_RealEstate[6,2] <- sprintf("%.2f",New_Fund_An_Tab_Res10RealEstate)
+
+
+table.FundAnalysisDMY_RealEstate[7,1] <- "Price EPS Estimate Next Year"
+table.FundAnalysisDMY_RealEstate[7,2] <- sprintf("%.2f",New_Fund_An_Tab_Res8RealEstate)
+
+
+table.FundAnalysisDMY_RealEstate[8,1] <- "Dividend Yield"
+table.FundAnalysisDMY_RealEstate[8,2] <- sprintf("%.6f",New_Fund_An_Tab_Res5RealEstate)
+
+
+table.FundAnalysisDMY_RealEstate[9,1] <- "Dividend Pay Date"
+table.FundAnalysisDMY_RealEstate[9,2] <- sprintf("%s",New_Fund_An_Tab_Res6RealEstate)
+
+table.FundAnalysisDMY_RealEstate[10,1] <- "Dividend Ex-Date"
+table.FundAnalysisDMY_RealEstate[10,2] <- sprintf("%s",New_Fund_An_Tab_Res13RealEstate)
+
+
+table.FundAnalysisDMY_RealEstate[11,1] <- "Earnings Time Stamp"
+table.FundAnalysisDMY_RealEstate[11,2] <- sprintf("%s",New_Fund_An_Tab_Res7RealEstate)
+
+table.FundAnalysisDMY_RealEstate[12,1] <- "Earnings Start Time"
+table.FundAnalysisDMY_RealEstate[12,2] <- sprintf("%s",New_Fund_An_Tab_Res9RealEstate)
+
+table.FundAnalysisDMY_RealEstate[13,1] <- "Earnings End Time"
+table.FundAnalysisDMY_RealEstate[13,2] <- sprintf("%s",New_Fund_An_Tab_Res11RealEstate)
+
+table.FundAnalysisDMY_RealEstate[14,1] <- "Change From 50-day Moving Average"
+table.FundAnalysisDMY_RealEstate[14,2] <- sprintf("%.2f",New_Fund_An_Tab_Res14RealEstate)
+
+table.FundAnalysisDMY_RealEstate[15,1] <- "Change From 200-day Moving Average"
+table.FundAnalysisDMY_RealEstate[15,2] <- sprintf("%.2f",New_Fund_An_Tab_Res15RealEstate)
+
+
+tex.table.FundAnalysisDMY_RealEstate <- xtable(table.FundAnalysisDMY_RealEstate)
+caption(tex.table.FundAnalysisDMY_RealEstate) <- sprintf("Fundamental Analysis parameters for %s", listaRealEstate[i])
+print(tex.table.FundAnalysisDMY_RealEstate,
+      include.rownames = FALSE,
+      caption.placement = "top",
+      table.placement = "ht")
+
+
+}
+
+
+
+@
+
+\FloatBarrier
+
+\clearpage
+
+
+\thispagestyle{empty}
+
+\end{document}
+
+
+
